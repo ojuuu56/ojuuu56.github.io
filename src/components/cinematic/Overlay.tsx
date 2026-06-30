@@ -81,7 +81,7 @@ export default function Overlay() {
             <h2 className="reveal text-overlay font-serif text-4xl leading-[1.05] tracking-tight md:text-6xl whitespace-pre-line">
               {s.title}
             </h2>
-            <p className="reveal text-overlay/80 mt-6 text-base md:text-lg font-light tracking-wide">
+            <p className="reveal text-white/80 mt-6 text-base md:text-lg font-light tracking-wide">
               {s.body}
             </p>
             {i === sections.length - 1 && (
