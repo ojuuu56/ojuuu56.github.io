@@ -124,14 +124,24 @@ function Airliner({
       0,
       1,
     );
-    const x = startX + local * Math.abs(startX) * 2.1;
-    ref.current.position.set(x, y + Math.sin(state.clock.elapsedTime * 0.3) * 0.05, z);
+    // Ease the cross with a gentle sine for cinematic feel
+    const eased = 0.5 - 0.5 * Math.cos(local * Math.PI);
+    const span = Math.abs(startX) * 2.2;
+    const x = startX + eased * span;
+    const bobY = y + Math.sin(state.clock.elapsedTime * 0.4) * 0.06;
+    ref.current.position.set(x, bobY, z);
     ref.current.lookAt(state.camera.position);
+    // Slight bank toward direction of travel
+    ref.current.rotation.z += Math.sign(startX) * 0.08;
     const visible = local > 0.001 && local < 0.999;
     ref.current.visible = visible;
     contrailRef.current.visible = visible;
-    contrailRef.current.position.set(x - 3.5, y + 0.05, z - 0.02);
-    contrailRef.current.scale.set(7, 0.18, 1);
+    // Contrail trails BEHIND the aircraft (opposite to travel direction)
+    const dir = -Math.sign(startX);
+    contrailRef.current.position.set(x + dir * 4 * scale, bobY + 0.02, z - 0.05);
+    contrailRef.current.scale.set(8 * scale, 0.22 * scale, 1);
+    const mat = contrailRef.current.material as THREE.MeshBasicMaterial;
+    mat.opacity = 0.55 * Math.sin(local * Math.PI);
   });
   return (
     <>
@@ -142,14 +152,50 @@ function Airliner({
       <mesh ref={contrailRef}>
         <planeGeometry args={[1, 1]} />
         <meshBasicMaterial
-          color="#ffffff"
+          color="#fff5e6"
           transparent
-          opacity={0.35}
+          opacity={0}
           depthWrite={false}
           toneMapped={false}
         />
       </mesh>
     </>
+  );
+}
+
+function SunFlare() {
+  const ref = useRef<THREE.Mesh>(null!);
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    const p = progress.v;
+    // The flare lives "outside" — only meaningful once we're through the window
+    const visible = p > 0.32;
+    ref.current.visible = visible;
+    if (!visible) return;
+    // Slow drift across the sky as the camera moves
+    ref.current.position.set(
+      6 - p * 2 + Math.sin(t * 0.08) * 0.3,
+      2.4 + Math.cos(t * 0.1) * 0.2,
+      -14,
+    );
+    const s = 4 + Math.sin(t * 0.5) * 0.25;
+    ref.current.scale.set(s, s, 1);
+    ref.current.lookAt(state.camera.position);
+    const mat = ref.current.material as THREE.MeshBasicMaterial;
+    mat.opacity = THREE.MathUtils.smoothstep(p, 0.32, 0.5) * 0.55;
+  });
+  return (
+    <mesh ref={ref}>
+      <circleGeometry args={[1, 64]} />
+      <meshBasicMaterial
+        color="#ffd9a8"
+        transparent
+        opacity={0}
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+        toneMapped={false}
+      />
+    </mesh>
   );
 }
 
@@ -214,17 +260,19 @@ export default function Scene() {
       <Cloud position={[0, 3.5, -36]} scale={8} speed={0.1} drift={6.1} />
       <Cloud position={[-5, -3.5, -10]} scale={2.4} speed={0.85} drift={2.3} />
 
-      <Airliner startX={-14} y={1.6} z={-18} scale={1.4} triggerStart={0.55} triggerEnd={0.78} />
-      <Airliner startX={11} y={-1.2} z={-26} scale={1.0} triggerStart={0.76} triggerEnd={0.96} />
+      <SunFlare />
+
+      {/* Aircraft crossings — larger and closer so they're clearly visible */}
+      <Airliner startX={-10} y={1.4} z={-13} scale={2.2} triggerStart={0.42} triggerEnd={0.7} />
+      <Airliner startX={9} y={-1.6} z={-18} scale={1.6} triggerStart={0.7} triggerEnd={0.95} />
 
       <CabinWindow />
       <Rig />
 
       {ready && (
         <EffectComposer multisampling={0}>
-          <DepthOfField focusDistance={0.02} focalLength={0.025} bokehScale={1.2} />
-          <Bloom intensity={0.4} luminanceThreshold={0.78} luminanceSmoothing={0.3} mipmapBlur />
-          <Vignette eskil={false} offset={0.2} darkness={0.78} />
+          <Bloom intensity={0.55} luminanceThreshold={0.7} luminanceSmoothing={0.35} mipmapBlur />
+          <Vignette eskil={false} offset={0.22} darkness={0.75} />
         </EffectComposer>
       )}
     </Canvas>
