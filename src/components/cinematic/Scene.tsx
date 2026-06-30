@@ -159,16 +159,15 @@ function Rig() {
     const cam = state.camera as THREE.PerspectiveCamera;
     // Phase 1 (0 -> 0.3): dolly toward window
     // Phase 2 (0.3 -> 0.55): pass through
-    // Phase 3 (0.55 -> 1): cinematic flight
-    const z = THREE.MathUtils.lerp(5, -8, p);
+    // Phase 3 (0.55 -> 1): cinematic flight — gentle continued forward motion
+    const z = THREE.MathUtils.lerp(5, -2.5, p);
     cam.position.z = z;
     // subtle handheld
     const t = state.clock.elapsedTime;
-    cam.position.x = Math.sin(t * 0.12) * 0.08 + p * 0.3;
-    cam.position.y = Math.cos(t * 0.15) * 0.05 + p * 0.4;
+    cam.position.x = Math.sin(t * 0.12) * 0.08 + Math.sin(p * Math.PI) * 0.4;
+    cam.position.y = Math.cos(t * 0.15) * 0.05 + p * 0.3;
     cam.rotation.z = Math.sin(t * 0.1) * 0.005;
-    // gentle FOV breathe
-    cam.fov = THREE.MathUtils.lerp(35, 42, p);
+    cam.fov = THREE.MathUtils.lerp(35, 46, p);
     cam.updateProjectionMatrix();
   });
   return null;
@@ -208,17 +207,26 @@ export default function Scene() {
       <fog attach="fog" args={["#1a2330", 18, 70]} />
       <SkyDome />
 
-      <Cloud position={[-6, -1.5, -8]} scale={2.4} speed={0.6} drift={0.2} />
-      <Cloud position={[7, 1.2, -12]} scale={3.2} speed={0.4} drift={1.7} />
-      <Cloud position={[-10, 2, -18]} scale={4.5} speed={0.25} drift={3.4} />
-      <Cloud position={[12, -2.5, -22]} scale={5.2} speed={0.18} drift={4.9} />
-      <Cloud position={[0, 3.5, -30]} scale={7} speed={0.1} drift={6.1} />
-      <Cloud position={[-3, -4, -6]} scale={2} speed={0.9} drift={2.3} />
+      <Cloud position={[-8, -1.5, -12]} scale={3.2} speed={0.6} drift={0.2} />
+      <Cloud position={[9, 1.2, -16]} scale={3.8} speed={0.4} drift={1.7} />
+      <Cloud position={[-12, 2, -22]} scale={5} speed={0.25} drift={3.4} />
+      <Cloud position={[14, -2.5, -28]} scale={6} speed={0.18} drift={4.9} />
+      <Cloud position={[0, 3.5, -36]} scale={8} speed={0.1} drift={6.1} />
+      <Cloud position={[-5, -3.5, -10]} scale={2.4} speed={0.85} drift={2.3} />
 
-      <Airliner startX={-14} y={1.6} z={-16} scale={1.4} triggerStart={0.58} triggerEnd={0.78} />
-      <Airliner startX={9} y={-1.2} z={-25} scale={1.0} triggerStart={0.78} triggerEnd={0.95} />
+      <Airliner startX={-14} y={1.6} z={-18} scale={1.4} triggerStart={0.55} triggerEnd={0.78} />
+      <Airliner startX={11} y={-1.2} z={-26} scale={1.0} triggerStart={0.76} triggerEnd={0.96} />
 
       <CabinWindow />
+      <Rig />
+
+      {ready && (
+        <EffectComposer multisampling={0}>
+          <DepthOfField focusDistance={0.02} focalLength={0.025} bokehScale={1.2} />
+          <Bloom intensity={0.4} luminanceThreshold={0.78} luminanceSmoothing={0.3} mipmapBlur />
+          <Vignette eskil={false} offset={0.2} darkness={0.78} />
+        </EffectComposer>
+      )}
       <Rig />
 
       {ready && (
