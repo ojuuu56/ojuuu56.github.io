@@ -262,19 +262,19 @@ export default function Scene() {
 
       <SunFlare />
 
-      {/* Aircraft crossings — larger and closer so they're clearly visible */}
-      <Airliner startX={-10} y={1.4} z={-13} scale={2.2} triggerStart={0.42} triggerEnd={0.7} />
-      <Airliner startX={9} y={-1.6} z={-18} scale={1.6} triggerStart={0.7} triggerEnd={0.95} />
+      {/* Hero airliner — flies in once, then holds position with subtle parallax */}
+      <Airliner homeX={2.4} homeY={0.4} homeZ={-12} scale={2.4} />
 
       <CabinWindow />
       <Rig />
 
       {ready && (
         <EffectComposer multisampling={0}>
-          <Bloom intensity={0.55} luminanceThreshold={0.7} luminanceSmoothing={0.35} mipmapBlur />
-          <Vignette eskil={false} offset={0.22} darkness={0.75} />
+          <Bloom intensity={0.25} luminanceThreshold={0.85} luminanceSmoothing={0.2} mipmapBlur />
+          <Vignette eskil={false} offset={0.25} darkness={0.7} />
         </EffectComposer>
       )}
+
     </Canvas>
   );
 }
