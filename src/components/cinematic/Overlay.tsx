@@ -63,7 +63,7 @@ export default function Overlay() {
   }, []);
 
   return (
-    <div ref={wrapRef} className="pointer-events-none absolute inset-0 z-10">
+    <div ref={wrapRef} className="relative w-full">
       <nav className="pointer-events-auto fixed left-0 right-0 top-0 z-20 flex items-center justify-between px-8 py-6 mix-blend-difference">
         <span className="text-overlay text-[0.7rem] uppercase tracking-[0.4em]">Étoile · Reverie 001</span>
         <span className="text-overlay text-[0.7rem] uppercase tracking-[0.4em]">Scroll to begin</span>
