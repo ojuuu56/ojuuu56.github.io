@@ -11,6 +11,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import buddhaFavicon from "@/assets/buddha-favicon.ico.asset.json";
+
 
 function NotFoundComponent() {
   return (
@@ -77,17 +79,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Buddha Air — Care, comfort and safety above the Himalayas" },
+      {
+        name: "description",
+        content:
+          "Nepal's largest domestic airline. A cinematic window-seat reverie above the Himalayas — flights to Kathmandu, Pokhara, Lumbini, Kolkata and beyond.",
+      },
+      { name: "author", content: "Buddha Air" },
+      { property: "og:title", content: "Buddha Air — A reverie at altitude" },
+      {
+        property: "og:description",
+        content: "A cinematic window-seat journey through the Himalayan sky with Buddha Air.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { property: "og:site_name", content: "Buddha Air" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/x-icon", href: buddhaFavicon.url },
+      { rel: "shortcut icon", href: buddhaFavicon.url },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -96,6 +107,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

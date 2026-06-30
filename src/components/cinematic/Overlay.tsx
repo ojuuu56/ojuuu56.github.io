@@ -1,31 +1,38 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import logoWhite from "@/assets/buddha-logo-white.png.asset.json";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Hero (first viewport) intentionally has NO text — just the window.
-// Chapters begin after the camera has passed through the glass.
-const sections = [
+const stats = [
+  { value: "721K", label: "Total Flights" },
+  { value: "27M", label: "Happy Passengers" },
+  { value: "60%", label: "Market Share" },
+  { value: "16", label: "Aircraft" },
+];
+
+const destinations = [
+  "Kathmandu", "Pokhara", "Lumbini", "Bhairahawa",
+  "Bhadrapur", "Biratnagar", "Janakpur", "Bharatpur",
+  "Dhangadhi", "Nepalgunj", "Tumlingtar", "Kolkata",
+];
+
+const fleet = [
   {
-    eyebrow: "Chapter I",
-    title: "Through the glass.",
-    body: "The cabin dissolves. Light folds around you.",
+    name: "ATR 72-500",
+    spec: "Twin-turboprop · 70 seats",
+    note: "The workhorse of the Himalayan skies, optimised for short STOL runways and high-altitude airfields.",
   },
   {
-    eyebrow: "Chapter II",
-    title: "A choreography of clouds.",
-    body: "Volumes drift past with patient gravity.",
+    name: "ATR 42-320",
+    spec: "Twin-turboprop · 46 seats",
+    note: "Agile regional craft used for our scenic mountain flights along the Annapurna and Everest ranges.",
   },
   {
-    eyebrow: "Chapter III",
-    title: "Crossings.",
-    body: "Other travelers, other altitudes — silent companions.",
-  },
-  {
-    eyebrow: "Arrival",
-    title: "The horizon, kept.",
-    body: "Reserve your seat by the window.",
+    name: "Beechcraft 1900D",
+    spec: "Twin-turboprop · 18 seats",
+    note: "Pressurised, weather-tolerant — built for the most demanding corners of Nepal's geography.",
   },
 ];
 
@@ -38,35 +45,19 @@ export default function Overlay() {
       gsap.utils.toArray<HTMLElement>(".chapter").forEach((el) => {
         gsap.fromTo(
           el.querySelectorAll(".reveal"),
-          { y: 50, opacity: 0, filter: "blur(10px)" },
+          { y: 40, opacity: 0, filter: "blur(8px)" },
           {
             y: 0,
             opacity: 1,
             filter: "blur(0px)",
-            duration: 1.2,
+            duration: 1,
             ease: "power3.out",
-            stagger: 0.14,
+            stagger: 0.1,
             scrollTrigger: {
               trigger: el,
-              start: "top 70%",
+              start: "top 75%",
               end: "bottom 30%",
               toggleActions: "play reverse play reverse",
-            },
-          },
-        );
-
-        // Subtle parallax lift of the text card as the section scrolls through
-        gsap.fromTo(
-          el.querySelector(".chapter-card"),
-          { y: 60 },
-          {
-            y: -60,
-            ease: "none",
-            scrollTrigger: {
-              trigger: el,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
             },
           },
         );
@@ -75,37 +66,140 @@ export default function Overlay() {
     return () => ctx.revert();
   }, []);
 
+  const Card = ({ children }: { children: React.ReactNode }) => (
+    <div className="relative max-w-2xl">
+      <div className="absolute -inset-5 -z-10 rounded-2xl bg-gradient-to-br from-black/70 via-black/50 to-black/20 backdrop-blur-md md:-inset-8" />
+      {children}
+    </div>
+  );
+
   return (
     <div ref={wrapRef} className="relative w-full">
-      {/* Hero spacer — pure window, no UI on first screen */}
+      {/* Hero: PURE window view — no text, no logo */}
       <section className="h-screen w-full" aria-hidden />
 
-      {sections.map((s, i) => (
-        <section
-          key={i}
-          className="chapter relative flex h-screen w-full items-end px-6 pb-20 md:px-16 md:pb-28"
-        >
-          <div className="chapter-card relative max-w-xl">
-            {/* Soft frosted slate so text never blends with clouds */}
-            <div className="absolute -inset-6 -z-10 rounded-2xl bg-gradient-to-br from-black/60 via-black/40 to-black/10 backdrop-blur-md md:-inset-8" />
-            <p className="reveal mb-5 text-[0.65rem] uppercase tracking-[0.5em] text-amber-100/90">
-              {s.eyebrow}
-            </p>
-            <h2 className="reveal font-serif text-4xl leading-[1.02] tracking-tight text-white md:text-6xl whitespace-pre-line drop-shadow-[0_4px_30px_rgba(0,0,0,0.6)]">
-              {s.title}
-            </h2>
-            <p className="reveal mt-5 max-w-md text-sm font-light tracking-wide text-white/85 md:text-base">
-              {s.body}
-            </p>
-            {i === sections.length - 1 && (
-              <button className="reveal pointer-events-auto mt-9 inline-flex items-center gap-3 border border-white/50 bg-white/10 px-8 py-4 text-[0.7rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20">
-                Reserve a window seat
-                <span aria-hidden>→</span>
-              </button>
-            )}
+      {/* About */}
+      <section className="chapter relative flex min-h-screen w-full items-end px-5 pb-16 sm:px-8 md:px-16 md:pb-24">
+        <Card>
+          <img
+            src={logoWhite.url}
+            alt="Buddha Air"
+            className="reveal mb-6 h-9 w-auto opacity-90 md:h-12"
+            loading="lazy"
+          />
+          <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
+            Nepal · Since 1997
+          </p>
+          <h2 className="reveal font-serif text-3xl leading-[1.05] tracking-tight text-white sm:text-4xl md:text-6xl">
+            Care, comfort, and safety —
+            <br className="hidden sm:block" />
+            <span className="italic text-amber-100/90"> above the Himalayas.</span>
+          </h2>
+          <p className="reveal mt-5 max-w-lg text-sm font-light leading-relaxed text-white/85 sm:text-base">
+            For nearly three decades, Buddha Air has connected the valleys, plains and peaks
+            of Nepal — and beyond — with the country's largest and most trusted domestic fleet.
+          </p>
+        </Card>
+      </section>
+
+      {/* Stats */}
+      <section className="chapter relative flex min-h-screen w-full items-center px-5 sm:px-8 md:px-16">
+        <Card>
+          <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
+            By the numbers
+          </p>
+          <h2 className="reveal mb-8 font-serif text-3xl leading-tight text-white sm:text-4xl md:text-5xl">
+            A scale built on trust.
+          </h2>
+          <div className="grid grid-cols-2 gap-5 sm:gap-8 md:grid-cols-4">
+            {stats.map((s) => (
+              <div key={s.label} className="reveal">
+                <div className="font-serif text-3xl text-white sm:text-4xl md:text-5xl">{s.value}</div>
+                <div className="mt-2 text-[0.6rem] uppercase tracking-[0.3em] text-white/65 sm:text-xs">
+                  {s.label}
+                </div>
+              </div>
+            ))}
           </div>
-        </section>
-      ))}
+        </Card>
+      </section>
+
+      {/* Fleet */}
+      <section className="chapter relative flex min-h-screen w-full items-center px-5 py-20 sm:px-8 md:px-16">
+        <Card>
+          <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
+            The Fleet
+          </p>
+          <h2 className="reveal mb-8 font-serif text-3xl leading-tight text-white sm:text-4xl md:text-5xl">
+            Sixteen aircraft. One standard.
+          </h2>
+          <div className="space-y-5">
+            {fleet.map((f) => (
+              <div key={f.name} className="reveal border-l border-white/25 pl-5">
+                <div className="flex flex-wrap items-baseline gap-x-4">
+                  <h3 className="font-serif text-xl text-white sm:text-2xl">{f.name}</h3>
+                  <span className="text-[0.65rem] uppercase tracking-[0.3em] text-amber-100/70 sm:text-xs">
+                    {f.spec}
+                  </span>
+                </div>
+                <p className="mt-2 max-w-lg text-sm font-light leading-relaxed text-white/80">
+                  {f.note}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
+
+      {/* Destinations */}
+      <section className="chapter relative flex min-h-screen w-full items-center px-5 py-20 sm:px-8 md:px-16">
+        <Card>
+          <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
+            Destinations
+          </p>
+          <h2 className="reveal mb-8 font-serif text-3xl leading-tight text-white sm:text-4xl md:text-5xl">
+            From the Terai to the Top of the World.
+          </h2>
+          <div className="reveal grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 md:grid-cols-4">
+            {destinations.map((d) => (
+              <div
+                key={d}
+                className="border-b border-white/15 pb-2 font-serif text-base text-white/90 sm:text-lg"
+              >
+                {d}
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
+
+      {/* Mountain flight + CTA */}
+      <section className="chapter relative flex min-h-screen w-full items-end px-5 pb-16 sm:px-8 md:px-16 md:pb-24">
+        <Card>
+          <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
+            The Everest Experience
+          </p>
+          <h2 className="reveal font-serif text-3xl leading-[1.05] text-white sm:text-4xl md:text-6xl">
+            One hour. <span className="italic">Eight thousand metres.</span>
+          </h2>
+          <p className="reveal mt-5 max-w-lg text-sm font-light leading-relaxed text-white/85 sm:text-base">
+            Every passenger receives a window seat for our signature mountain flight —
+            a sunrise pass along the Himalayan crown, ending at Everest itself.
+          </p>
+          <a
+            href="https://www.buddhaair.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="reveal pointer-events-auto mt-8 inline-flex items-center gap-3 border border-white/50 bg-white/10 px-6 py-3.5 text-[0.65rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20 sm:px-8 sm:py-4 sm:text-[0.7rem]"
+          >
+            Book with Buddha Air
+            <span aria-hidden>→</span>
+          </a>
+          <p className="reveal mt-6 text-[0.65rem] uppercase tracking-[0.35em] text-white/45">
+            Buddha Air Pvt. Ltd. · Jawalakhel, Lalitpur, Nepal
+          </p>
+        </Card>
+      </section>
     </div>
   );
 }
