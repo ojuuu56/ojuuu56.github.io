@@ -4,12 +4,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Hero (first viewport) intentionally has NO text — just the window.
+// Chapters begin after the camera has passed through the glass.
 const sections = [
-  {
-    eyebrow: "Étoile Atelier",
-    title: "Above the world,\nstillness becomes a place.",
-    body: "A passenger reverie at thirty-eight thousand feet.",
-  },
   {
     eyebrow: "Chapter I",
     title: "Through the glass.",
@@ -41,19 +38,35 @@ export default function Overlay() {
       gsap.utils.toArray<HTMLElement>(".chapter").forEach((el) => {
         gsap.fromTo(
           el.querySelectorAll(".reveal"),
-          { y: 40, opacity: 0, filter: "blur(8px)" },
+          { y: 50, opacity: 0, filter: "blur(10px)" },
           {
             y: 0,
             opacity: 1,
             filter: "blur(0px)",
             duration: 1.2,
             ease: "power3.out",
-            stagger: 0.12,
+            stagger: 0.14,
             scrollTrigger: {
               trigger: el,
-              start: "top 75%",
+              start: "top 70%",
               end: "bottom 30%",
               toggleActions: "play reverse play reverse",
+            },
+          },
+        );
+
+        // Subtle parallax lift of the text card as the section scrolls through
+        gsap.fromTo(
+          el.querySelector(".chapter-card"),
+          { y: 60 },
+          {
+            y: -60,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
             },
           },
         );
@@ -64,28 +77,28 @@ export default function Overlay() {
 
   return (
     <div ref={wrapRef} className="relative w-full">
-      <nav className="pointer-events-auto fixed left-0 right-0 top-0 z-20 flex items-center justify-between px-8 py-6 mix-blend-difference">
-        <span className="text-overlay text-[0.7rem] uppercase tracking-[0.4em]">Étoile · Reverie 001</span>
-        <span className="text-overlay text-[0.7rem] uppercase tracking-[0.4em]">Scroll to begin</span>
-      </nav>
+      {/* Hero spacer — pure window, no UI on first screen */}
+      <section className="h-screen w-full" aria-hidden />
 
       {sections.map((s, i) => (
         <section
           key={i}
-          className="chapter relative flex h-screen w-full items-end px-8 pb-24 md:px-16 md:pb-32"
+          className="chapter relative flex h-screen w-full items-end px-6 pb-20 md:px-16 md:pb-28"
         >
-          <div className="max-w-2xl">
-            <p className="reveal text-overlay mb-6 text-[0.7rem] uppercase tracking-[0.45em]">
+          <div className="chapter-card relative max-w-xl">
+            {/* Soft frosted slate so text never blends with clouds */}
+            <div className="absolute -inset-6 -z-10 rounded-2xl bg-gradient-to-br from-black/60 via-black/40 to-black/10 backdrop-blur-md md:-inset-8" />
+            <p className="reveal mb-5 text-[0.65rem] uppercase tracking-[0.5em] text-amber-100/90">
               {s.eyebrow}
             </p>
-            <h2 className="reveal text-overlay font-serif text-4xl leading-[1.05] tracking-tight md:text-6xl whitespace-pre-line">
+            <h2 className="reveal font-serif text-4xl leading-[1.02] tracking-tight text-white md:text-6xl whitespace-pre-line drop-shadow-[0_4px_30px_rgba(0,0,0,0.6)]">
               {s.title}
             </h2>
-            <p className="reveal text-white/80 mt-6 text-base md:text-lg font-light tracking-wide">
+            <p className="reveal mt-5 max-w-md text-sm font-light tracking-wide text-white/85 md:text-base">
               {s.body}
             </p>
             {i === sections.length - 1 && (
-              <button className="reveal pointer-events-auto mt-10 inline-flex items-center gap-3 border border-white/40 bg-white/5 px-8 py-4 text-[0.7rem] uppercase tracking-[0.4em] text-white backdrop-blur-sm transition hover:bg-white/15">
+              <button className="reveal pointer-events-auto mt-9 inline-flex items-center gap-3 border border-white/50 bg-white/10 px-8 py-4 text-[0.7rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20">
                 Reserve a window seat
                 <span aria-hidden>→</span>
               </button>
