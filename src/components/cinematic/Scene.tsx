@@ -165,36 +165,59 @@ function Airliner({
 
 function SunFlare() {
   const ref = useRef<THREE.Mesh>(null!);
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {
+          uOpacity: { value: 0 },
+          uColor: { value: new THREE.Color("#ffd9a8") },
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          varying vec2 vUv;
+          uniform float uOpacity;
+          uniform vec3 uColor;
+          void main() {
+            float d = distance(vUv, vec2(0.5));
+            // core + soft halo
+            float core = smoothstep(0.5, 0.0, d);
+            float halo = smoothstep(0.5, 0.15, d) * 0.6;
+            float a = pow(core, 2.2) + halo * 0.4;
+            gl_FragColor = vec4(uColor, a * uOpacity);
+          }
+        `,
+      }),
+    [],
+  );
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     const p = progress.v;
-    // The flare lives "outside" — only meaningful once we're through the window
     const visible = p > 0.32;
     ref.current.visible = visible;
     if (!visible) return;
-    // Slow drift across the sky as the camera moves
     ref.current.position.set(
-      6 - p * 2 + Math.sin(t * 0.08) * 0.3,
-      2.4 + Math.cos(t * 0.1) * 0.2,
-      -14,
+      4.5 - p * 1.5 + Math.sin(t * 0.08) * 0.25,
+      2.6 + Math.cos(t * 0.1) * 0.15,
+      -10,
     );
-    const s = 4 + Math.sin(t * 0.5) * 0.25;
+    const s = 3.2 + Math.sin(t * 0.6) * 0.2;
     ref.current.scale.set(s, s, 1);
     ref.current.lookAt(state.camera.position);
-    const mat = ref.current.material as THREE.MeshBasicMaterial;
-    mat.opacity = THREE.MathUtils.smoothstep(p, 0.32, 0.5) * 0.55;
+    (material.uniforms.uOpacity.value as number) =
+      THREE.MathUtils.smoothstep(p, 0.32, 0.5) * (0.85 + Math.sin(t * 1.4) * 0.05);
   });
   return (
-    <mesh ref={ref}>
-      <circleGeometry args={[1, 64]} />
-      <meshBasicMaterial
-        color="#ffd9a8"
-        transparent
-        opacity={0}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-        toneMapped={false}
-      />
+    <mesh ref={ref} material={material}>
+      <planeGeometry args={[1, 1, 1, 1]} />
     </mesh>
   );
 }
