@@ -227,15 +227,6 @@ export default function Scene() {
           <Vignette eskil={false} offset={0.2} darkness={0.78} />
         </EffectComposer>
       )}
-      <Rig />
-
-      {ready && (
-        <EffectComposer multisampling={0}>
-          <DepthOfField focusDistance={0.015} focalLength={0.04} bokehScale={2.2} />
-          <Bloom intensity={0.35} luminanceThreshold={0.72} luminanceSmoothing={0.25} mipmapBlur />
-          <Vignette eskil={false} offset={0.18} darkness={0.85} />
-        </EffectComposer>
-      )}
     </Canvas>
   );
 }
