@@ -97,69 +97,47 @@ function Cloud({
 }
 
 function Airliner({
-  startX,
-  y,
-  z,
+  homeX,
+  homeY,
+  homeZ,
   scale,
-  triggerStart,
-  triggerEnd,
 }: {
-  startX: number;
-  y: number;
-  z: number;
+  homeX: number;
+  homeY: number;
+  homeZ: number;
   scale: number;
-  triggerStart: number;
-  triggerEnd: number;
 }) {
   const tex = useLoader(TextureLoader, airliner);
   const ref = useRef<THREE.Mesh>(null!);
-  const contrailRef = useRef<THREE.Mesh>(null!);
   useEffect(() => {
     tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
   }, [tex]);
   useFrame((state) => {
     const p = progress.v;
-    const local = THREE.MathUtils.clamp(
-      (p - triggerStart) / (triggerEnd - triggerStart),
-      0,
-      1,
-    );
-    const eased = 0.5 - 0.5 * Math.cos(local * Math.PI);
-    // Travel from startX through 0 to -startX (full cross-screen sweep)
-    const x = startX * (1 - 2 * eased);
-    const bobY = y + Math.sin(state.clock.elapsedTime * 0.4) * 0.06;
-    ref.current.position.set(x, bobY, z);
+    // Phase A (0 -> 0.35): plane flies in from the right and settles into place
+    // Phase B (0.35 -> 1): plane holds position with subtle bob + parallax drift
+    const flyIn = THREE.MathUtils.smoothstep(p, 0.0, 0.35);
+    const entryX = 14; // off-screen right
+    const x = THREE.MathUtils.lerp(entryX, homeX, flyIn);
+    const bob = Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
+    // gentle vertical settle
+    const y = THREE.MathUtils.lerp(homeY + 1.2, homeY, flyIn) + bob;
+    // gentle push-back in depth on later scroll for parallax
+    const z = homeZ - p * 0.6;
+    ref.current.position.set(x, y, z);
     ref.current.lookAt(state.camera.position);
-    ref.current.rotation.z += Math.sign(startX) * 0.06;
-    const visible = local > 0.001 && local < 0.999;
-    ref.current.visible = visible;
-    contrailRef.current.visible = visible;
-    // Contrail trails BEHIND the aircraft (toward its origin)
-    const dir = Math.sign(startX);
-    contrailRef.current.position.set(x + dir * 4 * scale, bobY + 0.02, z - 0.05);
-    contrailRef.current.scale.set(8 * scale, 0.22 * scale, 1);
-    const mat = contrailRef.current.material as THREE.MeshBasicMaterial;
-    mat.opacity = 0.6 * Math.sin(local * Math.PI);
+    // slight bank during entry, leveling out
+    ref.current.rotation.z = (1 - flyIn) * -0.18 + Math.sin(state.clock.elapsedTime * 0.3) * 0.01;
   });
   return (
-    <>
-      <mesh ref={ref} scale={scale}>
-        <planeGeometry args={[4, 2]} />
-        <meshBasicMaterial map={tex} transparent depthWrite={false} toneMapped={false} />
-      </mesh>
-      <mesh ref={contrailRef}>
-        <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial
-          color="#fff5e6"
-          transparent
-          opacity={0}
-          depthWrite={false}
-          toneMapped={false}
-        />
-      </mesh>
-    </>
+    <mesh ref={ref} scale={scale}>
+      <planeGeometry args={[4, 2]} />
+      <meshBasicMaterial map={tex} transparent depthWrite={false} toneMapped={false} />
+    </mesh>
   );
 }
+
 
 function SunFlare() {
   const ref = useRef<THREE.Mesh>(null!);
@@ -284,19 +262,19 @@ export default function Scene() {
 
       <SunFlare />
 
-      {/* Aircraft crossings — larger and closer so they're clearly visible */}
-      <Airliner startX={-10} y={1.4} z={-13} scale={2.2} triggerStart={0.42} triggerEnd={0.7} />
-      <Airliner startX={9} y={-1.6} z={-18} scale={1.6} triggerStart={0.7} triggerEnd={0.95} />
+      {/* Hero airliner — flies in once, then holds position with subtle parallax */}
+      <Airliner homeX={2.4} homeY={0.4} homeZ={-12} scale={2.4} />
 
       <CabinWindow />
       <Rig />
 
       {ready && (
         <EffectComposer multisampling={0}>
-          <Bloom intensity={0.55} luminanceThreshold={0.7} luminanceSmoothing={0.35} mipmapBlur />
-          <Vignette eskil={false} offset={0.22} darkness={0.75} />
+          <Bloom intensity={0.25} luminanceThreshold={0.85} luminanceSmoothing={0.2} mipmapBlur />
+          <Vignette eskil={false} offset={0.25} darkness={0.7} />
         </EffectComposer>
       )}
+
     </Canvas>
   );
 }
