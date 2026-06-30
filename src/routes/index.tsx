@@ -11,7 +11,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "A cinematic, scroll-driven flight through the cabin window into a luxurious sky. Reserve a seat by the window.",
+          "A cinematic, scroll-driven flight through the cabin window into a luxurious sky.",
       },
       { property: "og:title", content: "Étoile — A reverie at altitude" },
       {
@@ -27,15 +27,17 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="relative w-full bg-[#05080d] text-white overflow-x-hidden">
+    <main className="relative w-full bg-[#05080d] text-white">
+      {/* Sticky 3D stage */}
       <div className="fixed inset-0 z-0">
         <Suspense fallback={<div className="h-full w-full bg-[#05080d]" />}>
           <Scene />
         </Suspense>
       </div>
-      <Overlay />
-      {/* Spacer that matches Scene height so overlay sections align over the sticky canvas */}
-      <div className="relative z-[1]" style={{ height: "500vh" }} />
+      {/* Scrollable overlay defines the page height */}
+      <div className="relative z-10">
+        <Overlay />
+      </div>
     </main>
   );
 }

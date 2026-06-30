@@ -175,13 +175,11 @@ function Rig() {
 }
 
 export default function Scene() {
-  const wrapRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!wrapRef.current) return;
     const trigger = ScrollTrigger.create({
-      trigger: wrapRef.current,
+      trigger: document.body,
       start: "top top",
       end: "bottom bottom",
       scrub: 1.2,
@@ -196,46 +194,40 @@ export default function Scene() {
   }, []);
 
   return (
-    <div ref={wrapRef} className="relative w-full" style={{ height: "500vh" }}>
-      <div className="sticky top-0 h-screen w-full">
-        <Canvas
-          dpr={[1, 1.75]}
-          gl={{
-            antialias: true,
-            powerPreference: "high-performance",
-            toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.05,
-          }}
-          camera={{ position: [0, 0, 5], fov: 35, near: 0.1, far: 200 }}
-        >
-          <color attach="background" args={["#05080d"]} />
-          <fog attach="fog" args={["#1a2330", 18, 70]} />
-          <SkyDome />
+    <Canvas
+      dpr={[1, 1.75]}
+      gl={{
+        antialias: true,
+        powerPreference: "high-performance",
+        toneMapping: THREE.ACESFilmicToneMapping,
+        toneMappingExposure: 1.05,
+      }}
+      camera={{ position: [0, 0, 5], fov: 35, near: 0.1, far: 200 }}
+    >
+      <color attach="background" args={["#05080d"]} />
+      <fog attach="fog" args={["#1a2330", 18, 70]} />
+      <SkyDome />
 
-          {/* Cloud parallax field — only meaningful after passing through window */}
-          <Cloud position={[-6, -1.5, -8]} scale={2.4} speed={0.6} drift={0.2} />
-          <Cloud position={[7, 1.2, -12]} scale={3.2} speed={0.4} drift={1.7} />
-          <Cloud position={[-10, 2, -18]} scale={4.5} speed={0.25} drift={3.4} />
-          <Cloud position={[12, -2.5, -22]} scale={5.2} speed={0.18} drift={4.9} />
-          <Cloud position={[0, 3.5, -30]} scale={7} speed={0.1} drift={6.1} />
-          <Cloud position={[-3, -4, -6]} scale={2} speed={0.9} drift={2.3} />
+      <Cloud position={[-6, -1.5, -8]} scale={2.4} speed={0.6} drift={0.2} />
+      <Cloud position={[7, 1.2, -12]} scale={3.2} speed={0.4} drift={1.7} />
+      <Cloud position={[-10, 2, -18]} scale={4.5} speed={0.25} drift={3.4} />
+      <Cloud position={[12, -2.5, -22]} scale={5.2} speed={0.18} drift={4.9} />
+      <Cloud position={[0, 3.5, -30]} scale={7} speed={0.1} drift={6.1} />
+      <Cloud position={[-3, -4, -6]} scale={2} speed={0.9} drift={2.3} />
 
-          {/* Aircraft crossings */}
-          <Airliner startX={-14} y={1.6} z={-16} scale={1.4} triggerStart={0.58} triggerEnd={0.78} />
-          <Airliner startX={9} y={-1.2} z={-25} scale={1.0} triggerStart={0.78} triggerEnd={0.95} />
+      <Airliner startX={-14} y={1.6} z={-16} scale={1.4} triggerStart={0.58} triggerEnd={0.78} />
+      <Airliner startX={9} y={-1.2} z={-25} scale={1.0} triggerStart={0.78} triggerEnd={0.95} />
 
-          <CabinWindow />
-          <Rig />
+      <CabinWindow />
+      <Rig />
 
-          {ready && (
-            <EffectComposer multisampling={0}>
-              <DepthOfField focusDistance={0.015} focalLength={0.04} bokehScale={2.2} />
-              <Bloom intensity={0.35} luminanceThreshold={0.72} luminanceSmoothing={0.25} mipmapBlur />
-              <Vignette eskil={false} offset={0.18} darkness={0.85} />
-            </EffectComposer>
-          )}
-        </Canvas>
-      </div>
-    </div>
+      {ready && (
+        <EffectComposer multisampling={0}>
+          <DepthOfField focusDistance={0.015} focalLength={0.04} bokehScale={2.2} />
+          <Bloom intensity={0.35} luminanceThreshold={0.72} luminanceSmoothing={0.25} mipmapBlur />
+          <Vignette eskil={false} offset={0.18} darkness={0.85} />
+        </EffectComposer>
+      )}
+    </Canvas>
   );
 }
