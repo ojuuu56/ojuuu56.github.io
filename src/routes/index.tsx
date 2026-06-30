@@ -7,21 +7,23 @@ const Scene = lazy(() => import("@/components/cinematic/Scene"));
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Étoile — A reverie at altitude" },
+      { title: "Buddha Air — A reverie at altitude" },
       {
         name: "description",
         content:
-          "A cinematic, scroll-driven flight through the cabin window into a luxurious sky.",
+          "A cinematic, scroll-driven window-seat journey above the Himalayas with Buddha Air — Nepal's largest domestic airline since 1997.",
       },
-      { property: "og:title", content: "Étoile — A reverie at altitude" },
+      { property: "og:title", content: "Buddha Air — A reverie at altitude" },
       {
         property: "og:description",
-        content: "A cinematic, scroll-driven flight through the cabin window.",
+        content: "A cinematic window-seat journey through the Himalayan sky.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
+
   component: Index,
 });
 
