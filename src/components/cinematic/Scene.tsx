@@ -124,24 +124,22 @@ function Airliner({
       0,
       1,
     );
-    // Ease the cross with a gentle sine for cinematic feel
     const eased = 0.5 - 0.5 * Math.cos(local * Math.PI);
-    const span = Math.abs(startX) * 2.2;
-    const x = startX + eased * span;
+    // Travel from startX through 0 to -startX (full cross-screen sweep)
+    const x = startX * (1 - 2 * eased);
     const bobY = y + Math.sin(state.clock.elapsedTime * 0.4) * 0.06;
     ref.current.position.set(x, bobY, z);
     ref.current.lookAt(state.camera.position);
-    // Slight bank toward direction of travel
-    ref.current.rotation.z += Math.sign(startX) * 0.08;
+    ref.current.rotation.z += Math.sign(startX) * 0.06;
     const visible = local > 0.001 && local < 0.999;
     ref.current.visible = visible;
     contrailRef.current.visible = visible;
-    // Contrail trails BEHIND the aircraft (opposite to travel direction)
-    const dir = -Math.sign(startX);
+    // Contrail trails BEHIND the aircraft (toward its origin)
+    const dir = Math.sign(startX);
     contrailRef.current.position.set(x + dir * 4 * scale, bobY + 0.02, z - 0.05);
     contrailRef.current.scale.set(8 * scale, 0.22 * scale, 1);
     const mat = contrailRef.current.material as THREE.MeshBasicMaterial;
-    mat.opacity = 0.55 * Math.sin(local * Math.PI);
+    mat.opacity = 0.6 * Math.sin(local * Math.PI);
   });
   return (
     <>
@@ -204,19 +202,20 @@ function SunFlare() {
     const visible = p > 0.32;
     ref.current.visible = visible;
     if (!visible) return;
+      Math.sin(t * 0.6) * 0.15;
     ref.current.position.set(
-      4.5 - p * 1.5 + Math.sin(t * 0.08) * 0.25,
-      2.6 + Math.cos(t * 0.1) * 0.15,
-      -10,
+      4.8 + Math.sin(t * 0.08) * 0.2,
+      2.8 + Math.cos(t * 0.1) * 0.1,
+      -9,
     );
-    const s = 3.2 + Math.sin(t * 0.6) * 0.2;
+    const s = 1.4 + Math.sin(t * 0.6) * 0.08;
     ref.current.scale.set(s, s, 1);
     ref.current.lookAt(state.camera.position);
     (material.uniforms.uOpacity.value as number) =
-      THREE.MathUtils.smoothstep(p, 0.32, 0.5) * (0.85 + Math.sin(t * 1.4) * 0.05);
+      THREE.MathUtils.smoothstep(p, 0.32, 0.55) * 0.9;
   });
   return (
-    <mesh ref={ref} material={material}>
+    <mesh ref={ref} material={material} renderOrder={2}>
       <planeGeometry args={[1, 1, 1, 1]} />
     </mesh>
   );
