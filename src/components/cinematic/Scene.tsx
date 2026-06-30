@@ -202,9 +202,9 @@ function SunFlare() {
     const visible = p > 0.32;
     ref.current.visible = visible;
     if (!visible) return;
-      Math.sin(t * 0.6) * 0.15;
+      const wobble = Math.sin(t * 0.6) * 0.15;
     ref.current.position.set(
-      4.8 + Math.sin(t * 0.08) * 0.2,
+      4.8 + Math.sin(t * 0.08) * 0.2 + wobble * 0.2,
       2.8 + Math.cos(t * 0.1) * 0.1,
       -9,
     );
