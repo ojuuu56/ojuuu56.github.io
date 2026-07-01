@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense, lazy } from "react";
 import Overlay from "@/components/cinematic/Overlay";
+import { Toaster } from "@/components/ui/sonner";
 
 const Scene = lazy(() => import("@/components/cinematic/Scene"));
 
@@ -40,6 +41,7 @@ function Index() {
       <div className="relative z-10">
         <Overlay />
       </div>
+      <Toaster theme="dark" position="bottom-center" />
     </main>
   );
 }

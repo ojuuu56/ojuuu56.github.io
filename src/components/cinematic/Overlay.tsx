@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import logoWhite from "@/assets/buddha-logo-white.png.asset.json";
+import logo from "@/assets/buddha-logo-clean.png.asset.json";
+import BookingDialog from "./BookingDialog";
+import GlobeDestinations from "./GlobeDestinations";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,12 +12,6 @@ const stats = [
   { value: "27M", label: "Happy Passengers" },
   { value: "60%", label: "Market Share" },
   { value: "16", label: "Aircraft" },
-];
-
-const destinations = [
-  "Kathmandu", "Pokhara", "Lumbini", "Bhairahawa",
-  "Bhadrapur", "Biratnagar", "Janakpur", "Bharatpur",
-  "Dhangadhi", "Nepalgunj", "Tumlingtar", "Kolkata",
 ];
 
 const fleet = [
@@ -42,20 +38,21 @@ export default function Overlay() {
   useEffect(() => {
     if (!wrapRef.current) return;
     const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>(".chapter").forEach((el) => {
+      gsap.utils.toArray<HTMLElement>(".chapter-slow").forEach((el) => {
+        const els = el.querySelectorAll(".reveal");
         gsap.fromTo(
-          el.querySelectorAll(".reveal"),
-          { y: 40, opacity: 0, filter: "blur(8px)" },
+          els,
+          { y: 60, opacity: 0, filter: "blur(14px)" },
           {
             y: 0,
             opacity: 1,
             filter: "blur(0px)",
-            duration: 1,
+            duration: 1.8,
             ease: "power3.out",
-            stagger: 0.1,
+            stagger: 0.28, // slow, deliberate — one element at a time
             scrollTrigger: {
               trigger: el,
-              start: "top 75%",
+              start: "top 65%",
               end: "bottom 30%",
               toggleActions: "play reverse play reverse",
             },
@@ -78,19 +75,19 @@ export default function Overlay() {
       {/* Hero: PURE window view — no text, no logo */}
       <section className="h-screen w-full" aria-hidden />
 
-      {/* About */}
-      <section className="chapter relative flex min-h-screen w-full items-end px-5 pb-16 sm:px-8 md:px-16 md:pb-24">
+      {/* About — slow cinematic reveal (clouds → plane → then text) */}
+      <section className="chapter-slow relative flex min-h-screen w-full items-end px-5 pb-16 sm:px-8 md:px-16 md:pb-24">
         <Card>
           <img
-            src={logoWhite.url}
+            src={logo.url}
             alt="Buddha Air"
-            className="reveal mb-6 h-9 w-auto opacity-90 md:h-12"
+            className="reveal mb-6 h-10 w-auto md:h-14"
             loading="lazy"
           />
-          <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
+          <p className="reveal text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
             Nepal · Since 1997
           </p>
-          <h2 className="reveal font-serif text-3xl leading-[1.05] tracking-tight text-white sm:text-4xl md:text-6xl">
+          <h2 className="reveal mt-4 font-serif text-3xl leading-[1.05] tracking-tight text-white sm:text-4xl md:text-6xl">
             Care, comfort, and safety —
             <br className="hidden sm:block" />
             <span className="italic text-amber-100/90"> above the Himalayas.</span>
@@ -99,11 +96,18 @@ export default function Overlay() {
             For nearly three decades, Buddha Air has connected the valleys, plains and peaks
             of Nepal — and beyond — with the country's largest and most trusted domestic fleet.
           </p>
+          <div className="reveal pt-6">
+            <BookingDialog>
+              <button className="pointer-events-auto inline-flex items-center gap-3 border border-white/50 bg-white/10 px-6 py-3 text-[0.65rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20">
+                Book a flight <span aria-hidden>→</span>
+              </button>
+            </BookingDialog>
+          </div>
         </Card>
       </section>
 
       {/* Stats */}
-      <section className="chapter relative flex min-h-screen w-full items-center px-5 sm:px-8 md:px-16">
+      <section className="chapter-slow relative flex min-h-screen w-full items-center px-5 sm:px-8 md:px-16">
         <Card>
           <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
             By the numbers
@@ -125,7 +129,7 @@ export default function Overlay() {
       </section>
 
       {/* Fleet */}
-      <section className="chapter relative flex min-h-screen w-full items-center px-5 py-20 sm:px-8 md:px-16">
+      <section className="chapter-slow relative flex min-h-screen w-full items-center px-5 py-20 sm:px-8 md:px-16">
         <Card>
           <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
             The Fleet
@@ -151,30 +155,11 @@ export default function Overlay() {
         </Card>
       </section>
 
-      {/* Destinations */}
-      <section className="chapter relative flex min-h-screen w-full items-center px-5 py-20 sm:px-8 md:px-16">
-        <Card>
-          <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
-            Destinations
-          </p>
-          <h2 className="reveal mb-8 font-serif text-3xl leading-tight text-white sm:text-4xl md:text-5xl">
-            From the Terai to the Top of the World.
-          </h2>
-          <div className="reveal grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 md:grid-cols-4">
-            {destinations.map((d) => (
-              <div
-                key={d}
-                className="border-b border-white/15 pb-2 font-serif text-base text-white/90 sm:text-lg"
-              >
-                {d}
-              </div>
-            ))}
-          </div>
-        </Card>
-      </section>
+      {/* Destinations — rotating globe */}
+      <GlobeDestinations />
 
       {/* Mountain flight + CTA */}
-      <section className="chapter relative flex min-h-screen w-full items-end px-5 pb-16 sm:px-8 md:px-16 md:pb-24">
+      <section className="chapter-slow relative flex min-h-screen w-full items-end px-5 pb-16 sm:px-8 md:px-16 md:pb-24">
         <Card>
           <p className="reveal mb-4 text-[0.6rem] uppercase tracking-[0.45em] text-amber-100/90 sm:text-[0.7rem]">
             The Everest Experience
@@ -186,17 +171,15 @@ export default function Overlay() {
             Every passenger receives a window seat for our signature mountain flight —
             a sunrise pass along the Himalayan crown, ending at Everest itself.
           </p>
-          <a
-            href="https://www.buddhaair.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="reveal pointer-events-auto mt-8 inline-flex items-center gap-3 border border-white/50 bg-white/10 px-6 py-3.5 text-[0.65rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20 sm:px-8 sm:py-4 sm:text-[0.7rem]"
-          >
-            Book with Buddha Air
-            <span aria-hidden>→</span>
-          </a>
+          <div className="reveal pt-8">
+            <BookingDialog>
+              <button className="pointer-events-auto inline-flex items-center gap-3 border border-white/50 bg-white/10 px-6 py-3.5 text-[0.65rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20 sm:px-8 sm:py-4 sm:text-[0.7rem]">
+                Book with Buddha Air <span aria-hidden>→</span>
+              </button>
+            </BookingDialog>
+          </div>
           <p className="reveal mt-6 text-[0.65rem] uppercase tracking-[0.35em] text-white/45">
-            Buddha Air Pvt. Ltd. · Jawalakhel, Lalitpur, Nepal
+            Buddha Air Pvt. Ltd. · Jawalakhel, Lalitpur, Nepal · +977 98-2931-7970
           </p>
         </Card>
       </section>
