@@ -94,10 +94,14 @@ export default function GlobeDestinations() {
         <div className="relative mx-auto aspect-square w-full max-w-[520px]">
           <div
             ref={globe}
-            className="absolute inset-0 rounded-full bg-cover bg-center"
-            style={{ backgroundImage: `url(${earthGlobe})` }}
+            className="absolute inset-0 bg-contain bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${earthGlobe})`,
+              filter: "drop-shadow(0 0 40px rgba(255,255,255,0.55)) drop-shadow(0 0 90px rgba(255,255,255,0.25))",
+            }}
           />
         </div>
+
       </div>
     </section>
   );
