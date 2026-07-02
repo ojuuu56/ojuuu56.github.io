@@ -47,12 +47,12 @@ export default function Overlay() {
             y: 0,
             opacity: 1,
             filter: "blur(0px)",
-            duration: 1.8,
+            duration: 2.2,
             ease: "power3.out",
-            stagger: 0.28, // slow, deliberate — one element at a time
+            stagger: 0.42,
             scrollTrigger: {
               trigger: el,
-              start: "top 65%",
+              start: "top 40%",
               end: "bottom 30%",
               toggleActions: "play reverse play reverse",
             },
@@ -62,6 +62,7 @@ export default function Overlay() {
     }, wrapRef);
     return () => ctx.revert();
   }, []);
+
 
   const Card = ({ children }: { children: React.ReactNode }) => (
     <div className="relative max-w-2xl">
