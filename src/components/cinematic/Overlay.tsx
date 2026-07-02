@@ -176,13 +176,11 @@ export default function Overlay() {
           <div className="reveal pt-8">
             <BookingDialog>
               <button className="pointer-events-auto inline-flex items-center gap-3 border border-white/50 bg-white/10 px-6 py-3.5 text-[0.65rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20 sm:px-8 sm:py-4 sm:text-[0.7rem]">
-                Book with Buddha Air <span aria-hidden>→</span>
+                Book
               </button>
             </BookingDialog>
           </div>
-          <p className="reveal mt-6 text-[0.65rem] uppercase tracking-[0.35em] text-white/45">
-            Buddha Air Pvt. Ltd. · Jawalakhel, Lalitpur, Nepal · +977 98-2931-7970
-          </p>
+
         </Card>
       </section>
     </div>
