@@ -205,10 +205,12 @@ export default function BookingDialog({ children }: Props) {
           <DialogFooter className="pt-2">
             <button
               type="submit"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-amber-400 px-4 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-black transition hover:bg-amber-300"
+              disabled={submitting}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-amber-400 px-4 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-black transition hover:bg-amber-300 disabled:opacity-60"
             >
-              Book Now
+              {submitting ? "Booking…" : "Book Now"}
             </button>
+
           </DialogFooter>
 
         </form>
