@@ -215,15 +215,13 @@ export default function BookingDialog({ children }: Props) {
           <DialogFooter className="pt-2">
             <button
               type="submit"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#25D366] px-4 py-3 text-sm font-medium text-black transition hover:bg-[#1ebe57]"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-white px-4 py-3 text-sm font-medium uppercase tracking-[0.3em] text-black transition hover:bg-white/90"
             >
-              Send booking via WhatsApp
+              Book
             </button>
           </DialogFooter>
-          <p className="text-center text-[0.65rem] uppercase tracking-[0.3em] text-white/40">
-            Reservations · +977 98-2931-7970
-          </p>
         </form>
+
       </DialogContent>
     </Dialog>
   );
