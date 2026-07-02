@@ -1,30 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense, lazy } from "react";
 import Overlay from "@/components/cinematic/Overlay";
-import { Toaster } from "@/components/ui/sonner";
 
 const Scene = lazy(() => import("@/components/cinematic/Scene"));
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Buddha Air — A reverie at altitude" },
+      { title: "Étoile — A reverie at altitude" },
       {
         name: "description",
         content:
-          "A cinematic, scroll-driven window-seat journey above the Himalayas with Buddha Air — Nepal's largest domestic airline since 1997.",
+          "A cinematic, scroll-driven flight through the cabin window into a luxurious sky.",
       },
-      { property: "og:title", content: "Buddha Air — A reverie at altitude" },
+      { property: "og:title", content: "Étoile — A reverie at altitude" },
       {
         property: "og:description",
-        content: "A cinematic window-seat journey through the Himalayan sky.",
+        content: "A cinematic, scroll-driven flight through the cabin window.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
   }),
-
   component: Index,
 });
 
@@ -41,7 +38,6 @@ function Index() {
       <div className="relative z-10">
         <Overlay />
       </div>
-      <Toaster theme="dark" position="bottom-center" />
     </main>
   );
 }
