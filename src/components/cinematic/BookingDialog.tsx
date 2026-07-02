@@ -18,12 +18,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { submitBooking } from "@/lib/booking.functions";
 
 const DESTINATIONS = [
   "Kathmandu", "Pokhara", "Lumbini", "Bhairahawa",
   "Bhadrapur", "Biratnagar", "Janakpur", "Bharatpur",
   "Dhangadhi", "Nepalgunj", "Tumlingtar", "Kolkata",
 ];
+
+
 
 const WHATSAPP_NUMBER = "9779829317970"; // +977 98 2931 7970
 
