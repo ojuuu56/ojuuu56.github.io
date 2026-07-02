@@ -47,12 +47,12 @@ export default function Overlay() {
             y: 0,
             opacity: 1,
             filter: "blur(0px)",
-            duration: 1.8,
+            duration: 2.2,
             ease: "power3.out",
-            stagger: 0.28, // slow, deliberate — one element at a time
+            stagger: 0.42,
             scrollTrigger: {
               trigger: el,
-              start: "top 65%",
+              start: "top 40%",
               end: "bottom 30%",
               toggleActions: "play reverse play reverse",
             },
@@ -62,6 +62,7 @@ export default function Overlay() {
     }, wrapRef);
     return () => ctx.revert();
   }, []);
+
 
   const Card = ({ children }: { children: React.ReactNode }) => (
     <div className="relative max-w-2xl">
@@ -99,10 +100,11 @@ export default function Overlay() {
           <div className="reveal pt-6">
             <BookingDialog>
               <button className="pointer-events-auto inline-flex items-center gap-3 border border-white/50 bg-white/10 px-6 py-3 text-[0.65rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20">
-                Book a flight <span aria-hidden>→</span>
+                Book
               </button>
             </BookingDialog>
           </div>
+
         </Card>
       </section>
 
@@ -174,13 +176,11 @@ export default function Overlay() {
           <div className="reveal pt-8">
             <BookingDialog>
               <button className="pointer-events-auto inline-flex items-center gap-3 border border-white/50 bg-white/10 px-6 py-3.5 text-[0.65rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20 sm:px-8 sm:py-4 sm:text-[0.7rem]">
-                Book with Buddha Air <span aria-hidden>→</span>
+                Book
               </button>
             </BookingDialog>
           </div>
-          <p className="reveal mt-6 text-[0.65rem] uppercase tracking-[0.35em] text-white/45">
-            Buddha Air Pvt. Ltd. · Jawalakhel, Lalitpur, Nepal · +977 98-2931-7970
-          </p>
+
         </Card>
       </section>
     </div>
