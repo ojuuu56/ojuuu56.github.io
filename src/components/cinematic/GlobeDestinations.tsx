@@ -92,15 +92,19 @@ export default function GlobeDestinations() {
         </div>
 
         <div className="relative mx-auto aspect-square w-full max-w-[520px]">
+          {/* Soft white halo behind sphere */}
+          <div className="pointer-events-none absolute inset-[-8%] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.35),rgba(255,255,255,0.08)_45%,transparent_70%)] blur-2xl" />
           <div
             ref={globe}
             className="absolute inset-0 bg-contain bg-center bg-no-repeat"
             style={{
               backgroundImage: `url(${earthGlobe})`,
-              filter: "drop-shadow(0 0 40px rgba(255,255,255,0.55)) drop-shadow(0 0 90px rgba(255,255,255,0.25))",
+              mixBlendMode: "screen",
+              filter: "drop-shadow(0 0 24px rgba(255,255,255,0.5))",
             }}
           />
         </div>
+
 
       </div>
     </section>
