@@ -100,10 +100,11 @@ export default function Overlay() {
           <div className="reveal pt-6">
             <BookingDialog>
               <button className="pointer-events-auto inline-flex items-center gap-3 border border-white/50 bg-white/10 px-6 py-3 text-[0.65rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20">
-                Book a flight <span aria-hidden>→</span>
+                Book
               </button>
             </BookingDialog>
           </div>
+
         </Card>
       </section>
 
