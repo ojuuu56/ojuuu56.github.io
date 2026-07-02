@@ -82,14 +82,15 @@ export default function BookingDialog({ children }: Props) {
         <DialogHeader>
           <DialogTitle className="font-serif text-2xl">Book your flight</DialogTitle>
           <DialogDescription className="text-white/60">
-            Your request is sent directly via WhatsApp to our reservations desk.
+            Your booking is delivered instantly to our reservations desk.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={submit} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <Field label="Trip type">
-              <Select value={form.tripType} onValueChange={(v) => set("tripType", v)}>
+              <Select value={form.tripType} onValueChange={(v) => set("tripType", v as "oneway" | "roundtrip")}>
+
                 <SelectTrigger className="bg-white/5"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="oneway">One-way</SelectItem>
