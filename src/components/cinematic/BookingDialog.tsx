@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { submitBooking } from "@/lib/booking.functions";
 
 const DESTINATIONS = [
   "Kathmandu", "Pokhara", "Lumbini", "Bhairahawa",
@@ -25,12 +26,13 @@ const DESTINATIONS = [
   "Dhangadhi", "Nepalgunj", "Tumlingtar", "Kolkata",
 ];
 
-const WHATSAPP_NUMBER = "9779829317970"; // +977 98 2931 7970
+
 
 type Props = { children: React.ReactNode };
 
 export default function BookingDialog({ children }: Props) {
   const [open, setOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -40,7 +42,7 @@ export default function BookingDialog({ children }: Props) {
     date: "",
     returnDate: "",
     passengers: "1",
-    tripType: "oneway",
+    tripType: "oneway" as "oneway" | "roundtrip",
     cabin: "Economy",
     notes: "",
   });
@@ -48,7 +50,7 @@ export default function BookingDialog({ children }: Props) {
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.phone || !form.date) {
       toast.error("Please fill name, phone and departure date.");
@@ -58,33 +60,20 @@ export default function BookingDialog({ children }: Props) {
       toast.error("Origin and destination must differ.");
       return;
     }
-
-    const msg = [
-      "*New Buddha Air Booking Request*",
-      "",
-      `*Name:* ${form.name}`,
-      `*Phone:* ${form.phone}`,
-      form.email ? `*Email:* ${form.email}` : null,
-      "",
-      `*Trip:* ${form.tripType === "roundtrip" ? "Round-trip" : "One-way"}`,
-      `*From:* ${form.from}`,
-      `*To:* ${form.to}`,
-      `*Depart:* ${form.date}`,
-      form.tripType === "roundtrip" && form.returnDate
-        ? `*Return:* ${form.returnDate}`
-        : null,
-      `*Passengers:* ${form.passengers}`,
-      `*Cabin:* ${form.cabin}`,
-      form.notes ? `\n*Notes:* ${form.notes}` : null,
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-    toast.success("Opening WhatsApp to send your request…");
-    setOpen(false);
+    setSubmitting(true);
+    try {
+      await submitBooking({ data: form });
+      toast.success("Booking confirmed — our team will contact you shortly.");
+      setOpen(false);
+      setForm((f) => ({ ...f, name: "", phone: "", email: "", notes: "" }));
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not submit your booking. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -93,14 +82,15 @@ export default function BookingDialog({ children }: Props) {
         <DialogHeader>
           <DialogTitle className="font-serif text-2xl">Book your flight</DialogTitle>
           <DialogDescription className="text-white/60">
-            Your request is sent directly via WhatsApp to our reservations desk.
+            Your booking is delivered instantly to our reservations desk.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={submit} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <Field label="Trip type">
-              <Select value={form.tripType} onValueChange={(v) => set("tripType", v)}>
+              <Select value={form.tripType} onValueChange={(v) => set("tripType", v as "oneway" | "roundtrip")}>
+
                 <SelectTrigger className="bg-white/5"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="oneway">One-way</SelectItem>
@@ -215,10 +205,12 @@ export default function BookingDialog({ children }: Props) {
           <DialogFooter className="pt-2">
             <button
               type="submit"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-amber-400 px-4 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-black transition hover:bg-amber-300"
+              disabled={submitting}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-amber-400 px-4 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-black transition hover:bg-amber-300 disabled:opacity-60"
             >
-              Book Now
+              {submitting ? "Booking…" : "Book Now"}
             </button>
+
           </DialogFooter>
 
         </form>
