@@ -199,6 +199,151 @@ function SunFlare() {
   );
 }
 
+function ParticleField() {
+  const ref = useRef<THREE.Points>(null!);
+  const { geometry, material } = useMemo(() => {
+    const count = 900;
+    const positions = new Float32Array(count * 3);
+    const seeds = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 40;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+      positions[i * 3 + 2] = -Math.random() * 30 - 2;
+      seeds[i] = Math.random();
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
+
+    const mat = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      uniforms: {
+        uTime: { value: 0 },
+        uProgress: { value: 0 },
+        uColor: { value: new THREE.Color("#ffe5c2") },
+      },
+      vertexShader: `
+        attribute float aSeed;
+        uniform float uTime;
+        uniform float uProgress;
+        varying float vAlpha;
+        void main() {
+          vec3 p = position;
+          p.x += sin(uTime * 0.3 + aSeed * 6.28) * 0.6;
+          p.y += cos(uTime * 0.25 + aSeed * 6.28) * 0.4;
+          p.z += mod(uTime * (0.6 + aSeed * 1.4) + aSeed * 30.0, 30.0) - 15.0;
+          vec4 mv = modelViewMatrix * vec4(p, 1.0);
+          gl_Position = projectionMatrix * mv;
+          float dist = -mv.z;
+          gl_PointSize = (60.0 / dist) * (0.4 + aSeed * 1.2) * (0.5 + uProgress * 0.8);
+          vAlpha = smoothstep(30.0, 4.0, dist) * (0.4 + aSeed * 0.6);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uColor;
+        varying float vAlpha;
+        void main() {
+          vec2 uv = gl_PointCoord - 0.5;
+          float d = length(uv);
+          float a = smoothstep(0.5, 0.0, d);
+          gl_FragColor = vec4(uColor, a * vAlpha * 0.55);
+        }
+      `,
+    });
+    return { geometry: geo, material: mat };
+  }, []);
+
+  useFrame((state) => {
+    (material.uniforms.uTime.value as number) = state.clock.elapsedTime;
+    (material.uniforms.uProgress.value as number) = progress.v;
+  });
+
+  return <points ref={ref} geometry={geometry} material={material} />;
+}
+
+function LightStreak() {
+  const ref = useRef<THREE.Mesh>(null!);
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {
+          uTime: { value: 0 },
+          uColor: { value: new THREE.Color("#fff2d6") },
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          varying vec2 vUv;
+          uniform float uTime;
+          uniform vec3 uColor;
+          void main() {
+            // horizontal streak: bright core along y=0.5, tapered along x
+            float y = abs(vUv.y - 0.5);
+            float core = smoothstep(0.03, 0.0, y);
+            float halo = smoothstep(0.25, 0.0, y) * 0.35;
+            float head = smoothstep(0.0, 0.35, vUv.x);
+            float tail = smoothstep(1.0, 0.4, vUv.x);
+            float a = (core + halo) * head * tail;
+            gl_FragColor = vec4(uColor, a);
+          }
+        `,
+      }),
+    [],
+  );
+  useFrame((state) => {
+    (material.uniforms.uTime.value as number) = state.clock.elapsedTime;
+    // Periodic shooting star every ~14s
+    const t = state.clock.elapsedTime;
+    const cycle = (t % 14.0) / 14.0;
+    const visible = cycle < 0.18 && progress.v > 0.4;
+    ref.current.visible = visible;
+    if (!visible) return;
+    const k = cycle / 0.18; // 0..1
+    ref.current.position.set(-10 + k * 22, 3.5 - k * 3.5, -14);
+    ref.current.rotation.z = -0.25;
+    ref.current.scale.set(6, 0.5, 1);
+  });
+  return (
+    <mesh ref={ref} material={material} renderOrder={3}>
+      <planeGeometry args={[1, 1]} />
+    </mesh>
+  );
+}
+
+function DistantAirliner() {
+  const tex = useLoader(TextureLoader, airliner);
+  const ref = useRef<THREE.Mesh>(null!);
+  useEffect(() => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+  }, [tex]);
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    // slow left-to-right crossing every ~40s, far away
+    const cycle = ((t + 6) % 40.0) / 40.0;
+    ref.current.position.set(-14 + cycle * 28, -1.6 + Math.sin(t * 0.1) * 0.05, -26);
+    ref.current.lookAt(state.camera.position);
+    const visible = progress.v > 0.35;
+    ref.current.visible = visible;
+    (ref.current.material as THREE.MeshBasicMaterial).opacity = 0.55;
+  });
+  return (
+    <mesh ref={ref} scale={1.1}>
+      <planeGeometry args={[4, 2]} />
+      <meshBasicMaterial map={tex} transparent depthWrite={false} opacity={0.55} toneMapped={false} />
+    </mesh>
+  );
+}
+
 function Rig() {
   useFrame((state) => {
     const p = progress.v;
@@ -261,6 +406,9 @@ export default function Scene() {
       <Cloud position={[-5, -3.5, -10]} scale={2.4} speed={0.85} drift={2.3} />
 
       <SunFlare />
+      <ParticleField />
+      <LightStreak />
+      <DistantAirliner />
 
       {/* Hero airliner — flies in once, then holds position with subtle parallax */}
       <Airliner homeX={2.4} homeY={0.4} homeZ={-12} scale={2.4} />
