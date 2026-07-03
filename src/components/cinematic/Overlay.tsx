@@ -42,7 +42,6 @@ export default function Overlay() {
   useEffect(() => {
     if (!wrapRef.current) return;
     const ctx = gsap.context(() => {
-      // Intro
       gsap.utils.toArray<HTMLElement>(".intro-reveal").forEach((el, i) => {
         gsap.fromTo(
           el,
@@ -53,18 +52,17 @@ export default function Overlay() {
             filter: "blur(0px)",
             duration: 1.1,
             ease: "power3.out",
-            delay: 0.1 + i * 0.12,
+            scrollTrigger: { trigger: el, start: "top 85%" },
+            delay: i * 0.08,
           },
         );
       });
 
-      // Work cards
       gsap.utils.toArray<HTMLElement>(".work").forEach((el) => {
         const img = el.querySelector<HTMLElement>(".work-img");
         const mask = el.querySelector<HTMLElement>(".work-mask");
         const caption = el.querySelectorAll<HTMLElement>(".work-cap");
 
-        // Mask sweep reveal
         if (mask) {
           gsap.fromTo(
             mask,
@@ -82,7 +80,6 @@ export default function Overlay() {
           );
         }
 
-        // Parallax on image
         if (img) {
           gsap.fromTo(
             img,
@@ -101,7 +98,6 @@ export default function Overlay() {
           );
         }
 
-        // Caption stagger
         gsap.fromTo(
           caption,
           { y: 24, opacity: 0 },
@@ -120,7 +116,6 @@ export default function Overlay() {
         );
       });
 
-      // Outro
       gsap.utils.toArray<HTMLElement>(".outro-reveal").forEach((el, i) => {
         gsap.fromTo(
           el,
@@ -141,30 +136,34 @@ export default function Overlay() {
 
   return (
     <div ref={wrapRef} className="relative w-full">
-      {/* Hero — silent window */}
+      {/* 1 · Silent window — hero */}
       <section className="h-screen w-full" aria-hidden />
 
-      {/* Intro */}
+      {/* 2–6 · Passing through the glass + settling into clouds */}
+      <section className="h-screen w-full" aria-hidden />
+      <section className="h-screen w-full" aria-hidden />
+      <section className="h-screen w-full" aria-hidden />
+      <section className="h-screen w-full" aria-hidden />
+      <section className="h-screen w-full" aria-hidden />
+
+      {/* 7 · Intro — arrives once we're in the sky */}
       <section className="relative flex min-h-screen w-full items-center px-6 md:px-16">
-        <div className="relative max-w-3xl">
+        <div className="relative max-w-2xl">
           <div className="absolute -inset-8 -z-10 rounded-2xl bg-black/45 backdrop-blur-md" />
-          <p className="intro-reveal text-[0.65rem] uppercase tracking-[0.5em] text-amber-100/90">
-            Portfolio — 2026
+          <p className="intro-reveal font-mono text-[0.65rem] uppercase tracking-[0.5em] text-amber-100/90">
+            Hi — a quick hello at 35,000 ft
           </p>
-          <h1 className="intro-reveal mt-5 font-serif text-5xl leading-[1] tracking-tight text-white md:text-7xl">
-            Graphic work,<br />quietly loud.
+          <h1 className="intro-reveal mt-5 font-serif text-4xl leading-[1.05] tracking-tight text-white md:text-6xl">
+            I'm Ojash.
           </h1>
-          <p className="intro-reveal mt-6 max-w-xl text-base font-light text-white/80 md:text-lg">
-            Ten pieces. Halftones, covers, stamps, packaging.
-            Scroll — the plane keeps flying while the work goes by.
+          <p className="intro-reveal mt-6 max-w-xl text-base font-light leading-relaxed text-white/85 md:text-lg">
+            I work as a creative director. I make art, and I try to build things
+            that hold some value for the people around me.
           </p>
-          <div className="intro-reveal mt-8 flex flex-wrap gap-2 text-[0.6rem] uppercase tracking-[0.35em] text-white/60">
-            {["React", "R3F / Three.js", "GSAP", "ScrollTrigger", "GLSL"].map((t) => (
-              <span key={t} className="border border-white/20 bg-white/5 px-3 py-1.5 backdrop-blur-md">
-                {t}
-              </span>
-            ))}
-          </div>
+          <p className="intro-reveal mt-4 max-w-xl text-sm font-light leading-relaxed text-white/60">
+            Keep scrolling — the plane keeps flying, and the work drifts past
+            the window.
+          </p>
         </div>
       </section>
 
@@ -180,33 +179,30 @@ export default function Overlay() {
                 : "justify-start"
           }`}
         >
-          <figure className="relative w-full max-w-[560px]">
-            {/* Frame */}
-            <div className="relative overflow-hidden rounded-sm shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10">
-              <div className="relative aspect-[4/5] w-full overflow-hidden bg-black">
+          <figure className="relative w-full max-w-[300px] md:max-w-[340px]">
+            <div className="relative overflow-hidden rounded-sm shadow-[0_30px_80px_-20px_rgba(0,0,0,0.75)] ring-1 ring-white/10">
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-black">
                 <img
                   src={w.src}
                   alt={w.title}
                   className="work-img absolute inset-0 h-full w-full object-cover will-change-transform"
                   loading="lazy"
                 />
-                {/* subtle grain + vignette */}
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_55%,rgba(0,0,0,0.55)_100%)]" />
-                {/* mask sweep */}
                 <div className="work-mask pointer-events-none absolute inset-0 origin-right bg-[#05080d]" />
               </div>
             </div>
 
-            <figcaption className="mt-5 flex items-end justify-between gap-6">
+            <figcaption className="mt-4 flex items-end justify-between gap-4">
               <div>
-                <p className="work-cap font-mono text-[0.65rem] uppercase tracking-[0.4em] text-amber-100/80">
+                <p className="work-cap font-mono text-[0.6rem] uppercase tracking-[0.4em] text-amber-100/80">
                   Work {w.n}
                 </p>
-                <h3 className="work-cap mt-2 font-serif text-2xl leading-tight text-white md:text-3xl">
+                <h3 className="work-cap mt-1.5 font-serif text-xl leading-tight text-white md:text-2xl">
                   {w.title}
                 </h3>
               </div>
-              <p className="work-cap font-mono text-[0.6rem] uppercase tracking-[0.35em] text-white/55">
+              <p className="work-cap font-mono text-[0.55rem] uppercase tracking-[0.35em] text-white/55">
                 {w.meta}
               </p>
             </figcaption>
@@ -218,15 +214,15 @@ export default function Overlay() {
       <section className="relative flex min-h-screen w-full items-center px-6 md:px-16">
         <div className="relative max-w-2xl">
           <div className="absolute -inset-8 -z-10 rounded-2xl bg-black/50 backdrop-blur-md" />
-          <p className="outro-reveal text-[0.65rem] uppercase tracking-[0.5em] text-amber-100/90">
+          <p className="outro-reveal font-mono text-[0.65rem] uppercase tracking-[0.5em] text-amber-100/90">
             End of reel
           </p>
-          <h2 className="outro-reveal mt-5 font-serif text-4xl leading-[1.05] tracking-tight text-white md:text-6xl">
-            Want a piece made<br />just for you?
+          <h2 className="outro-reveal mt-5 font-serif text-3xl leading-[1.05] tracking-tight text-white md:text-5xl">
+            Want to make something<br />together?
           </h2>
           <a
-            href="mailto:hello@example.com"
-            className="outro-reveal pointer-events-auto mt-9 inline-flex items-center gap-3 border border-white/50 bg-white/10 px-8 py-4 text-[0.7rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20"
+            href="mailto:hello@ojash.art"
+            className="outro-reveal pointer-events-auto mt-8 inline-flex items-center gap-3 border border-white/50 bg-white/10 px-7 py-3.5 text-[0.65rem] uppercase tracking-[0.4em] text-white backdrop-blur-md transition hover:bg-white/20"
           >
             Say hello
             <span aria-hidden>→</span>
