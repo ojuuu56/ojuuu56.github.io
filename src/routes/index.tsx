@@ -7,16 +7,16 @@ const Scene = lazy(() => import("@/components/cinematic/Scene"));
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Étoile — A reverie at altitude" },
+      { title: "Portfolio — Graphic Work" },
       {
         name: "description",
         content:
-          "A cinematic, scroll-driven flight through the cabin window into a luxurious sky.",
+          "A cinematic scroll through selected graphic design work — halftones, covers, stamps, packaging.",
       },
-      { property: "og:title", content: "Étoile — A reverie at altitude" },
+      { property: "og:title", content: "Portfolio — Graphic Work" },
       {
         property: "og:description",
-        content: "A cinematic, scroll-driven flight through the cabin window.",
+        content: "Selected graphic design work, presented in flight.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
