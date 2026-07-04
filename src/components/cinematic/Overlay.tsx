@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { revealSignal } from "./reveal-signal";
+
 
 import w1 from "@/assets/works/work-1.jpg.asset.json";
 import w2 from "@/assets/works/work-2.jpg.asset.json";
@@ -58,10 +60,15 @@ export default function Overlay() {
         );
       });
 
-      gsap.utils.toArray<HTMLElement>(".work").forEach((el) => {
+      gsap.utils.toArray<HTMLElement>(".work").forEach((el, idx) => {
         const img = el.querySelector<HTMLElement>(".work-img");
         const mask = el.querySelector<HTMLElement>(".work-mask");
         const caption = el.querySelectorAll<HTMLElement>(".work-cap");
+        const card = el.querySelector<HTMLElement>(".work-card");
+
+        // First card waits until we're deeper in the sky so the plane
+        // has time to pass through the window and the clouds settle.
+        const start = idx === 0 ? "top 55%" : "top 72%";
 
         if (mask) {
           gsap.fromTo(
@@ -69,12 +76,16 @@ export default function Overlay() {
             { scaleX: 1 },
             {
               scaleX: 0,
-              duration: 1.2,
+              duration: 1.35,
               ease: "power4.inOut",
               scrollTrigger: {
                 trigger: el,
-                start: "top 75%",
+                start,
                 toggleActions: "play none none reverse",
+                onEnter: () => gsap.to(revealSignal, { target: 1, duration: 0.6, overwrite: true }),
+                onEnterBack: () => gsap.to(revealSignal, { target: 1, duration: 0.6, overwrite: true }),
+                onLeave: () => gsap.to(revealSignal, { target: 0, duration: 1.2, overwrite: true }),
+                onLeaveBack: () => gsap.to(revealSignal, { target: 0, duration: 1.2, overwrite: true }),
               },
             },
           );
@@ -109,12 +120,56 @@ export default function Overlay() {
             stagger: 0.08,
             scrollTrigger: {
               trigger: el,
-              start: "top 65%",
+              start: idx === 0 ? "top 50%" : "top 65%",
               toggleActions: "play none none reverse",
             },
           },
         );
+
+        // Premium hover / focus: parallax tilt + glow, driven by CSS vars
+        if (card) {
+          const setVar = (k: string, v: string) => card.style.setProperty(k, v);
+          const onMove = (e: PointerEvent) => {
+            const r = card.getBoundingClientRect();
+            const nx = (e.clientX - r.left) / r.width - 0.5;
+            const ny = (e.clientY - r.top) / r.height - 0.5;
+            gsap.to(card, {
+              "--rx": `${-ny * 8}deg`,
+              "--ry": `${nx * 10}deg`,
+              "--px": `${nx * 12}px`,
+              "--py": `${ny * 12}px`,
+              "--gx": `${(nx + 0.5) * 100}%`,
+              "--gy": `${(ny + 0.5) * 100}%`,
+              duration: 0.4,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+          };
+          const onLeave = () => {
+            gsap.to(card, {
+              "--rx": "0deg",
+              "--ry": "0deg",
+              "--px": "0px",
+              "--py": "0px",
+              "--glow": "0",
+              duration: 0.7,
+              ease: "power3.out",
+              overwrite: "auto",
+            });
+          };
+          const onEnter = () => {
+            setVar("--glow", "1");
+          };
+          const onFocus = () => setVar("--glow", "1");
+          const onBlur = () => onLeave();
+          card.addEventListener("pointermove", onMove);
+          card.addEventListener("pointerenter", onEnter);
+          card.addEventListener("pointerleave", onLeave);
+          card.addEventListener("focus", onFocus);
+          card.addEventListener("blur", onBlur);
+        }
       });
+
 
       gsap.utils.toArray<HTMLElement>(".outro-reveal").forEach((el, i) => {
         gsap.fromTo(
@@ -167,6 +222,9 @@ export default function Overlay() {
         </div>
       </section>
 
+      {/* Breather · lets the plane finish gliding and clouds settle before card 01 */}
+      <section className="h-[70vh] w-full" aria-hidden />
+
       {/* Works */}
       {works.map((w) => (
         <section
@@ -179,7 +237,25 @@ export default function Overlay() {
                 : "justify-start"
           }`}
         >
-          <figure className="relative w-full max-w-[300px] md:max-w-[340px]">
+          <figure
+            tabIndex={0}
+            className="work-card group relative w-full max-w-[300px] outline-none md:max-w-[340px]"
+            style={{
+              transform:
+                "perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translate3d(var(--px,0),var(--py,0),0)",
+              transformStyle: "preserve-3d",
+              transition: "box-shadow 0.6s ease",
+            }}
+          >
+            {/* Ambient glow that lights up on hover/focus */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl opacity-[calc(var(--glow,0)*0.9)] blur-2xl transition-opacity duration-500"
+              style={{
+                background:
+                  "radial-gradient(60% 50% at var(--gx,50%) var(--gy,50%), rgba(255,214,160,0.35), transparent 70%)",
+              }}
+            />
             <div className="relative overflow-hidden rounded-sm shadow-[0_30px_80px_-20px_rgba(0,0,0,0.75)] ring-1 ring-white/10">
               <div className="relative aspect-[3/4] w-full overflow-hidden bg-black">
                 <img
@@ -189,6 +265,15 @@ export default function Overlay() {
                   loading="lazy"
                 />
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_55%,rgba(0,0,0,0.55)_100%)]" />
+                {/* Specular sheen that tracks the cursor */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 mix-blend-screen opacity-[calc(var(--glow,0)*0.55)] transition-opacity duration-300"
+                  style={{
+                    background:
+                      "radial-gradient(35% 30% at var(--gx,50%) var(--gy,50%), rgba(255,255,255,0.55), transparent 70%)",
+                  }}
+                />
                 <div className="work-mask pointer-events-none absolute inset-0 origin-right bg-[#05080d]" />
               </div>
             </div>
@@ -209,6 +294,7 @@ export default function Overlay() {
           </figure>
         </section>
       ))}
+
 
       {/* Outro */}
       <section className="relative flex min-h-screen w-full items-center px-6 md:px-16">

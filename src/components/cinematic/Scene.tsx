@@ -5,6 +5,8 @@ import * as THREE from "three";
 import { TextureLoader } from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { GrainDustEffect } from "./GrainDustEffect";
+import { revealSignal } from "./reveal-signal";
 
 import windowCabin from "@/assets/window-cabin.jpg";
 import skyClouds from "@/assets/sky-clouds.jpg";
@@ -15,6 +17,17 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Shared scroll progress (0..1)
 const progress = { v: 0 };
+
+// GLSL grain + dust post-effect wrapped as an R3F primitive
+function GrainDustPass() {
+  const effect = useMemo(() => new GrainDustEffect(), []);
+  useFrame(() => {
+    // Ease revealSignal.v toward target for smooth intensification
+    revealSignal.v += (revealSignal.target - revealSignal.v) * 0.08;
+    effect.setIntensity(revealSignal.v);
+  });
+  return <primitive object={effect} />;
+}
 
 function CabinWindow() {
   const tex = useLoader(TextureLoader, windowCabin);
@@ -257,8 +270,10 @@ function ParticleField() {
 
   useFrame((state) => {
     (material.uniforms.uTime.value as number) = state.clock.elapsedTime;
-    (material.uniforms.uProgress.value as number) = progress.v;
+    // Reveal boost intensifies dust density during card reveals
+    (material.uniforms.uProgress.value as number) = progress.v + revealSignal.v * 0.6;
   });
+
 
   return <points ref={ref} geometry={geometry} material={material} />;
 }
@@ -418,10 +433,12 @@ export default function Scene() {
 
       {ready && (
         <EffectComposer multisampling={0}>
-          <Bloom intensity={0.25} luminanceThreshold={0.85} luminanceSmoothing={0.2} mipmapBlur />
+          <Bloom intensity={0.28} luminanceThreshold={0.82} luminanceSmoothing={0.22} mipmapBlur />
           <Vignette eskil={false} offset={0.25} darkness={0.7} />
+          <GrainDustPass />
         </EffectComposer>
       )}
+
 
     </Canvas>
   );
