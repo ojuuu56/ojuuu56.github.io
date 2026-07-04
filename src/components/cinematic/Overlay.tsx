@@ -47,7 +47,18 @@ const works: Work[] = [
   { n: "08", title: "Scream in Violet", meta: "Halftone / Poster", src: w8.url, align: "left" },
   { n: "09", title: "Flashbulb", meta: "Editorial", src: w9.url, align: "right" },
   { n: "10", title: "Sweet Supari", meta: "Packaging Riff", src: w10.url, align: "center" },
+  { n: "11", title: "Red Hoodie", meta: "Garment / Print", src: w11.url, align: "left" },
+  { n: "12", title: "Lolita", meta: "Denim / Applique", src: w12.url, align: "right" },
+  { n: "13", title: "Big Ben, Small Fox", meta: "Shirt / Airbrush", src: w13.url, align: "left" },
+  { n: "14", title: "Eye Trousers", meta: "Pants / Hand-drawn", src: w14.url, align: "center" },
+  { n: "15", title: "Cross Track", meta: "Jacket / Tribal", src: w15.url, align: "right" },
+  { n: "16", title: "White Lace", meta: "Outerwear / Study", src: w16.url, align: "left" },
+  { n: "17", title: "Trench, Navy", meta: "Illustration", src: w17.url, align: "right" },
+  { n: "18", title: "Rust Bomber", meta: "Figure / Colored Pencil", src: w18.url, align: "left" },
+  { n: "19", title: "Sketch, No.1", meta: "Line / Graphite", src: w19.url, align: "center" },
+  { n: "20", title: "Tri-Colour Wrap", meta: "Editorial Sketch", src: w20.url, align: "right" },
 ];
+
 
 export default function Overlay() {
   const wrapRef = useRef<HTMLDivElement>(null);
