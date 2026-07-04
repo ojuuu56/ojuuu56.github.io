@@ -433,10 +433,12 @@ export default function Scene() {
 
       {ready && (
         <EffectComposer multisampling={0}>
-          <Bloom intensity={0.25} luminanceThreshold={0.85} luminanceSmoothing={0.2} mipmapBlur />
+          <Bloom intensity={0.28} luminanceThreshold={0.82} luminanceSmoothing={0.22} mipmapBlur />
           <Vignette eskil={false} offset={0.25} darkness={0.7} />
+          <GrainDustPass />
         </EffectComposer>
       )}
+
 
     </Canvas>
   );
