@@ -14,6 +14,17 @@ import w7 from "@/assets/works/work-7.jpg.asset.json";
 import w8 from "@/assets/works/work-8.jpg.asset.json";
 import w9 from "@/assets/works/work-9.jpg.asset.json";
 import w10 from "@/assets/works/work-10.jpg.asset.json";
+import w11 from "@/assets/works/work-11.jpg.asset.json";
+import w12 from "@/assets/works/work-12.jpg.asset.json";
+import w13 from "@/assets/works/work-13.jpg.asset.json";
+import w14 from "@/assets/works/work-14.jpg.asset.json";
+import w15 from "@/assets/works/work-15.jpg.asset.json";
+import w16 from "@/assets/works/work-16.jpg.asset.json";
+import w17 from "@/assets/works/work-17.jpg.asset.json";
+import w18 from "@/assets/works/work-18.jpg.asset.json";
+import w19 from "@/assets/works/work-19.jpg.asset.json";
+import w20 from "@/assets/works/work-20.jpg.asset.json";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
