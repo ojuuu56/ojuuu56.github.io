@@ -5,6 +5,8 @@ import * as THREE from "three";
 import { TextureLoader } from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { GrainDustEffect } from "./GrainDustEffect";
+import { revealSignal } from "./reveal-signal";
 
 import windowCabin from "@/assets/window-cabin.jpg";
 import skyClouds from "@/assets/sky-clouds.jpg";
@@ -15,6 +17,17 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Shared scroll progress (0..1)
 const progress = { v: 0 };
+
+// GLSL grain + dust post-effect wrapped as an R3F primitive
+function GrainDustPass() {
+  const effect = useMemo(() => new GrainDustEffect(), []);
+  useFrame(() => {
+    // Ease revealSignal.v toward target for smooth intensification
+    revealSignal.v += (revealSignal.target - revealSignal.v) * 0.08;
+    effect.setIntensity(revealSignal.v);
+  });
+  return <primitive object={effect} />;
+}
 
 function CabinWindow() {
   const tex = useLoader(TextureLoader, windowCabin);
