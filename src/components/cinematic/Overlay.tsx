@@ -14,6 +14,17 @@ import w7 from "@/assets/works/work-7.jpg.asset.json";
 import w8 from "@/assets/works/work-8.jpg.asset.json";
 import w9 from "@/assets/works/work-9.jpg.asset.json";
 import w10 from "@/assets/works/work-10.jpg.asset.json";
+import w11 from "@/assets/works/work-11.jpg.asset.json";
+import w12 from "@/assets/works/work-12.jpg.asset.json";
+import w13 from "@/assets/works/work-13.jpg.asset.json";
+import w14 from "@/assets/works/work-14.jpg.asset.json";
+import w15 from "@/assets/works/work-15.jpg.asset.json";
+import w16 from "@/assets/works/work-16.jpg.asset.json";
+import w17 from "@/assets/works/work-17.jpg.asset.json";
+import w18 from "@/assets/works/work-18.jpg.asset.json";
+import w19 from "@/assets/works/work-19.jpg.asset.json";
+import w20 from "@/assets/works/work-20.jpg.asset.json";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,7 +47,18 @@ const works: Work[] = [
   { n: "08", title: "Scream in Violet", meta: "Halftone / Poster", src: w8.url, align: "left" },
   { n: "09", title: "Flashbulb", meta: "Editorial", src: w9.url, align: "right" },
   { n: "10", title: "Sweet Supari", meta: "Packaging Riff", src: w10.url, align: "center" },
+  { n: "11", title: "Red Hoodie", meta: "Garment / Print", src: w11.url, align: "left" },
+  { n: "12", title: "Lolita", meta: "Denim / Applique", src: w12.url, align: "right" },
+  { n: "13", title: "Big Ben, Small Fox", meta: "Shirt / Airbrush", src: w13.url, align: "left" },
+  { n: "14", title: "Eye Trousers", meta: "Pants / Hand-drawn", src: w14.url, align: "center" },
+  { n: "15", title: "Cross Track", meta: "Jacket / Tribal", src: w15.url, align: "right" },
+  { n: "16", title: "White Lace", meta: "Outerwear / Study", src: w16.url, align: "left" },
+  { n: "17", title: "Trench, Navy", meta: "Illustration", src: w17.url, align: "right" },
+  { n: "18", title: "Rust Bomber", meta: "Figure / Colored Pencil", src: w18.url, align: "left" },
+  { n: "19", title: "Sketch, No.1", meta: "Line / Graphite", src: w19.url, align: "center" },
+  { n: "20", title: "Tri-Colour Wrap", meta: "Editorial Sketch", src: w20.url, align: "right" },
 ];
+
 
 export default function Overlay() {
   const wrapRef = useRef<HTMLDivElement>(null);

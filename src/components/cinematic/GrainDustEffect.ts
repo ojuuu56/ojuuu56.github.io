@@ -16,23 +16,25 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
   vec2 p = uv * resolution.xy;
   float g = hash(p + uTime * 60.0) - 0.5;
 
-  // Soft dust motes: sparse specks that pulse with reveal intensity
-  vec2 gp = floor(uv * 90.0);
-  float dust = step(0.9975 - uIntensity * 0.0025, hash(gp + floor(uTime * 8.0)));
-  vec3 dustCol = vec3(1.0, 0.92, 0.78) * dust * (0.35 + uIntensity * 0.6);
+  // Rare, warm dust motes — barely there, a touch stronger on reveal
+  vec2 gp = floor(uv * 120.0);
+  float dust = step(0.9995 - uIntensity * 0.0008, hash(gp + floor(uTime * 6.0)));
+  vec3 dustCol = vec3(1.0, 0.9, 0.72) * dust * (0.12 + uIntensity * 0.25);
 
-  // Vignette
+  // Very soft vignette
   float d = distance(uv, vec2(0.5));
-  float vig = smoothstep(0.85, 0.35, d);
+  float vig = smoothstep(0.9, 0.4, d);
 
-  // Grain amount: base + reveal boost
-  float amt = (0.055 + uIntensity * 0.06);
-  vec3 color = inputColor.rgb + g * amt;
-  color *= mix(0.78, 1.0, vig);
+  // Subtle luma-only grain so it doesn't wash the frame white
+  float amt = 0.018 + uIntensity * 0.015;
+  float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
+  vec3 color = inputColor.rgb + g * amt * (0.35 + luma * 0.65);
+  color *= mix(0.92, 1.0, vig);
   color += dustCol;
 
   outputColor = vec4(color, inputColor.a);
 }
+
 `;
 
 export class GrainDustEffect extends Effect {
