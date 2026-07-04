@@ -270,8 +270,10 @@ function ParticleField() {
 
   useFrame((state) => {
     (material.uniforms.uTime.value as number) = state.clock.elapsedTime;
-    (material.uniforms.uProgress.value as number) = progress.v;
+    // Reveal boost intensifies dust density during card reveals
+    (material.uniforms.uProgress.value as number) = progress.v + revealSignal.v * 0.6;
   });
+
 
   return <points ref={ref} geometry={geometry} material={material} />;
 }
