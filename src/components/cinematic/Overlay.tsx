@@ -60,10 +60,15 @@ export default function Overlay() {
         );
       });
 
-      gsap.utils.toArray<HTMLElement>(".work").forEach((el) => {
+      gsap.utils.toArray<HTMLElement>(".work").forEach((el, idx) => {
         const img = el.querySelector<HTMLElement>(".work-img");
         const mask = el.querySelector<HTMLElement>(".work-mask");
         const caption = el.querySelectorAll<HTMLElement>(".work-cap");
+        const card = el.querySelector<HTMLElement>(".work-card");
+
+        // First card waits until we're deeper in the sky so the plane
+        // has time to pass through the window and the clouds settle.
+        const start = idx === 0 ? "top 55%" : "top 72%";
 
         if (mask) {
           gsap.fromTo(
@@ -71,12 +76,16 @@ export default function Overlay() {
             { scaleX: 1 },
             {
               scaleX: 0,
-              duration: 1.2,
+              duration: 1.35,
               ease: "power4.inOut",
               scrollTrigger: {
                 trigger: el,
-                start: "top 75%",
+                start,
                 toggleActions: "play none none reverse",
+                onEnter: () => gsap.to(revealSignal, { target: 1, duration: 0.6, overwrite: true }),
+                onEnterBack: () => gsap.to(revealSignal, { target: 1, duration: 0.6, overwrite: true }),
+                onLeave: () => gsap.to(revealSignal, { target: 0, duration: 1.2, overwrite: true }),
+                onLeaveBack: () => gsap.to(revealSignal, { target: 0, duration: 1.2, overwrite: true }),
               },
             },
           );
@@ -111,12 +120,56 @@ export default function Overlay() {
             stagger: 0.08,
             scrollTrigger: {
               trigger: el,
-              start: "top 65%",
+              start: idx === 0 ? "top 50%" : "top 65%",
               toggleActions: "play none none reverse",
             },
           },
         );
+
+        // Premium hover / focus: parallax tilt + glow, driven by CSS vars
+        if (card) {
+          const setVar = (k: string, v: string) => card.style.setProperty(k, v);
+          const onMove = (e: PointerEvent) => {
+            const r = card.getBoundingClientRect();
+            const nx = (e.clientX - r.left) / r.width - 0.5;
+            const ny = (e.clientY - r.top) / r.height - 0.5;
+            gsap.to(card, {
+              "--rx": `${-ny * 8}deg`,
+              "--ry": `${nx * 10}deg`,
+              "--px": `${nx * 12}px`,
+              "--py": `${ny * 12}px`,
+              "--gx": `${(nx + 0.5) * 100}%`,
+              "--gy": `${(ny + 0.5) * 100}%`,
+              duration: 0.4,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+          };
+          const onLeave = () => {
+            gsap.to(card, {
+              "--rx": "0deg",
+              "--ry": "0deg",
+              "--px": "0px",
+              "--py": "0px",
+              "--glow": "0",
+              duration: 0.7,
+              ease: "power3.out",
+              overwrite: "auto",
+            });
+          };
+          const onEnter = () => {
+            setVar("--glow", "1");
+          };
+          const onFocus = () => setVar("--glow", "1");
+          const onBlur = () => onLeave();
+          card.addEventListener("pointermove", onMove);
+          card.addEventListener("pointerenter", onEnter);
+          card.addEventListener("pointerleave", onLeave);
+          card.addEventListener("focus", onFocus);
+          card.addEventListener("blur", onBlur);
+        }
       });
+
 
       gsap.utils.toArray<HTMLElement>(".outro-reveal").forEach((el, i) => {
         gsap.fromTo(
