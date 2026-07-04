@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { revealSignal } from "./reveal-signal";
+
 
 import w1 from "@/assets/works/work-1.jpg.asset.json";
 import w2 from "@/assets/works/work-2.jpg.asset.json";
