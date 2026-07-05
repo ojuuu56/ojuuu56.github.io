@@ -250,9 +250,8 @@ export default function Overlay() {
 
       {/* Works */}
       {works.map((w, i) => (
-        <>
+        <div key={w.n} className="contents">
           <section
-            key={w.n}
             className={`work relative flex min-h-screen w-full items-center px-4 py-20 sm:px-6 md:px-16 ${
               w.align === "right"
                 ? "justify-end"
