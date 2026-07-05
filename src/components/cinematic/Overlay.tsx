@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { revealSignal } from "./reveal-signal";
+import Conjure from "./Conjure";
 
 
 import w1 from "@/assets/works/work-1.jpg.asset.json";
@@ -248,73 +249,75 @@ export default function Overlay() {
       <section className="h-[70vh] w-full" aria-hidden />
 
       {/* Works */}
-      {works.map((w) => (
-        <section
-          key={w.n}
-          className={`work relative flex min-h-screen w-full items-center px-6 py-24 md:px-16 ${
-            w.align === "right"
-              ? "justify-end"
-              : w.align === "center"
-                ? "justify-center"
-                : "justify-start"
-          }`}
-        >
-          <figure
-            tabIndex={0}
-            className="work-card group relative w-full max-w-[300px] outline-none md:max-w-[340px]"
-            style={{
-              transform:
-                "perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translate3d(var(--px,0),var(--py,0),0)",
-              transformStyle: "preserve-3d",
-              transition: "box-shadow 0.6s ease",
-            }}
+      {works.map((w, i) => (
+        <div key={w.n} className="contents">
+          <section
+            className={`work relative flex min-h-screen w-full items-center px-4 py-20 sm:px-6 md:px-16 ${
+              w.align === "right"
+                ? "justify-end"
+                : w.align === "center"
+                  ? "justify-center"
+                  : "justify-start"
+            }`}
           >
-            {/* Ambient glow that lights up on hover/focus */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl opacity-[calc(var(--glow,0)*0.9)] blur-2xl transition-opacity duration-500"
+            <figure
+              tabIndex={0}
+              className="work-card group relative w-full max-w-[280px] outline-none sm:max-w-[340px] md:max-w-[420px]"
               style={{
-                background:
-                  "radial-gradient(60% 50% at var(--gx,50%) var(--gy,50%), rgba(255,214,160,0.35), transparent 70%)",
+                transform:
+                  "perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translate3d(var(--px,0),var(--py,0),0)",
+                transformStyle: "preserve-3d",
+                transition: "box-shadow 0.6s ease",
               }}
-            />
-            <div className="relative overflow-hidden rounded-sm shadow-[0_30px_80px_-20px_rgba(0,0,0,0.75)] ring-1 ring-white/10">
-              <div className="relative aspect-[3/4] w-full overflow-hidden bg-black">
-                <img
-                  src={w.src}
-                  alt={w.title}
-                  className="work-img absolute inset-0 h-full w-full object-cover will-change-transform"
-                  loading="lazy"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_55%,rgba(0,0,0,0.55)_100%)]" />
-                {/* Specular sheen that tracks the cursor */}
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 mix-blend-screen opacity-[calc(var(--glow,0)*0.55)] transition-opacity duration-300"
-                  style={{
-                    background:
-                      "radial-gradient(35% 30% at var(--gx,50%) var(--gy,50%), rgba(255,255,255,0.55), transparent 70%)",
-                  }}
-                />
-                <div className="work-mask pointer-events-none absolute inset-0 origin-right bg-[#05080d]" />
+            >
+              {/* Ambient glow that lights up on hover/focus */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl opacity-[calc(var(--glow,0)*0.9)] blur-2xl transition-opacity duration-500"
+                style={{
+                  background:
+                    "radial-gradient(60% 50% at var(--gx,50%) var(--gy,50%), rgba(255,214,160,0.35), transparent 70%)",
+                }}
+              />
+              <div className="relative overflow-hidden rounded-sm shadow-[0_30px_80px_-20px_rgba(0,0,0,0.75)] ring-1 ring-white/10">
+                <div className="relative w-full overflow-hidden bg-black">
+                  <img
+                    src={w.src}
+                    alt={w.title}
+                    className="work-img block h-auto w-full will-change-transform"
+                    loading="lazy"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_55%,rgba(0,0,0,0.45)_100%)]" />
+                  {/* Specular sheen that tracks the cursor */}
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 mix-blend-screen opacity-[calc(var(--glow,0)*0.55)] transition-opacity duration-300"
+                    style={{
+                      background:
+                        "radial-gradient(35% 30% at var(--gx,50%) var(--gy,50%), rgba(255,255,255,0.55), transparent 70%)",
+                    }}
+                  />
+                  <div className="work-mask pointer-events-none absolute inset-0 origin-right bg-[#05080d]" />
+                </div>
               </div>
-            </div>
 
-            <figcaption className="mt-4 flex items-end justify-between gap-4">
-              <div>
-                <p className="work-cap font-mono text-[0.6rem] uppercase tracking-[0.4em] text-amber-100/80">
-                  Work {w.n}
+              <figcaption className="mt-4 flex items-end justify-between gap-4">
+                <div>
+                  <p className="work-cap font-mono text-[0.6rem] uppercase tracking-[0.4em] text-amber-100/80">
+                    Work {w.n}
+                  </p>
+                  <h3 className="work-cap mt-1.5 font-serif text-lg leading-tight text-white sm:text-xl md:text-2xl">
+                    {w.title}
+                  </h3>
+                </div>
+                <p className="work-cap font-mono text-[0.55rem] uppercase tracking-[0.35em] text-white/55">
+                  {w.meta}
                 </p>
-                <h3 className="work-cap mt-1.5 font-serif text-xl leading-tight text-white md:text-2xl">
-                  {w.title}
-                </h3>
-              </div>
-              <p className="work-cap font-mono text-[0.55rem] uppercase tracking-[0.35em] text-white/55">
-                {w.meta}
-              </p>
-            </figcaption>
-          </figure>
-        </section>
+              </figcaption>
+            </figure>
+          </section>
+          {i === 9 && <Conjure />}
+        </div>
       ))}
 
 
