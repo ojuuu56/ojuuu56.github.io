@@ -316,8 +316,8 @@ export default function Overlay() {
               </figcaption>
             </figure>
           </section>
-          {i === 9 && <Conjure key="conjure" />}
-        </>
+          {i === 9 && <Conjure />}
+        </div>
       ))}
 
 
