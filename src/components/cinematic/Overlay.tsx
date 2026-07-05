@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { revealSignal } from "./reveal-signal";
+import Conjure from "./Conjure";
 
 
 import w1 from "@/assets/works/work-1.jpg.asset.json";
