@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { revealSignal } from "./reveal-signal";
-import Conjure from "./Conjure";
+import GallerySection from "../gallery/GallerySection";
 
 
 import w1 from "@/assets/works/work-1.jpg.asset.json";
@@ -316,7 +316,7 @@ export default function Overlay() {
               </figcaption>
             </figure>
           </section>
-          {i === 9 && <Conjure />}
+          {i === 9 && <GallerySection />}
         </div>
       ))}
 
